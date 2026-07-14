@@ -1,4 +1,92 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.heading {
+  color: #61dafb;
+  font-size: 80px;
+}
+
+h6 {
+  font-size: 40px;
+}
+
+.form {
+  display: flex;
+  border: 2px solid black;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0;
+  width: 600px;
+  height: 70px;
+}
+
+.form input {
+  border: none;
+  padding: 10px;
+  outline: none;
+  flex: 1;
+  font-size: 30px;
+}
+
+.form button {
+  background-color: #ffd7e8;
+  color: black;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  width: 80px;
+  font-size: 30px;
+  border-left: 2px solid black;
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+}
+
+.todos_container {
+  width: 600px;
+  border: 2px solid black;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 30px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .todo_item {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid gray;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #f9f3e6;
+}
+
+.todo_item input,
+svg {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.todo_item svg:hover {
+  color: red;
+}
+
+.todo_item p {
+  flex: 1;
+  font-size: 30px;
+}
+
+.tips {
+  font-size: 20px;
+  color: gray;
+  font-family: unset;
 }
