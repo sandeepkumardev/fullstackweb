@@ -29,17 +29,18 @@ const App = () => {
     setTodos(updatedTodos);
   };
 
-  // useEffect(() => {
-  //   const storedTodos = localStorage.getItem("todos");
-  //   if (storedTodos) {
-  //     setTodos(JSON.parse(storedTodos));
-  //   }
-  // }, []);
+  useEffect(() => {
+    const storedTodos = localStorage.getItem("todos");
+    if (storedTodos) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTodos(JSON.parse(storedTodos));
+    }
+  }, []);
 
-  // //hook
-  // useEffect(() => {
-  //   localStorage.setItem("todos", JSON.stringify(todos));
-  // }, [todos]);
+  //hook
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   return (
     <div className="App">
