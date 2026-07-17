@@ -1,0 +1,11 @@
+.icon {
+  position: relative;
+}
+
+.icon .count {
+  position: absolute;
+  top: -14px;
+  right: 40px;
+  font-weight: bold;
+  color: #f08804;
+}
