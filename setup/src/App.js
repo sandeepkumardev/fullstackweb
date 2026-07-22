@@ -1,4 +1,5 @@
 import Navigation from "./components/Navigation";
+import Clock from "./pages/Clock";
 import Counter from "./pages/Counter";
 import Ecomm from "./pages/Ecomm";
 import Home from "./pages/Home";
@@ -9,6 +10,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 function App() {
   return (
     <div className="App">
+      <Clock />
       <BrowserRouter>
         <Navigation />
         <Routes>
@@ -18,7 +20,6 @@ function App() {
           <Route path="/userform" element={<UserForm />} />
           <Route path="*" element={<h1>404 Not Found</h1>} />
         </Routes>
-        <h1>Footer</h1>
       </BrowserRouter>
     </div>
   );
