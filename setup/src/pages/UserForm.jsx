@@ -28,32 +28,31 @@
 
 // export default UserForm
 
-
-import React, { useState } from 'react'
+import React, { useState } from "react";
 
 const UserForm = () => {
-    const [form, setForm] = useState({
-        fullName: "",
-        email: "",
-        password: ""
-    })
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+  });
 
-    console.log(form)
+  console.log(form);
 
-    const handleForm = (e) => {
-        const key = e.target.name;
-        const value = e.target.value;
-        console.log(key, value)
-        setForm({...form, [key]: value})
-    }
+  const handleForm = (e) => {
+    const key = e.target.name;
+    const value = e.target.value;
+    console.log(key, value);
+    setForm({ ...form, [key]: value });
+  };
 
   return (
-    <div style={{display: "flex", flexDirection: "column"}}>
-        <input name="fullName" value={form.fullName} onChange={handleForm} placeholder='Name' />
-        <input name="email" value={form.email} onChange={handleForm} placeholder='Email' />
-        <input name="password" value={form.password} onChange={handleForm} placeholder='Password' />
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <input name="fullName" value={form.fullName} onChange={handleForm} placeholder="Name" />
+      <input name="email" value={form.email} onChange={handleForm} placeholder="Email" />
+      <input name="password" value={form.password} onChange={handleForm} placeholder="Password" />
     </div>
-  )
-}
+  );
+};
 
-export default UserForm
+export default UserForm;
