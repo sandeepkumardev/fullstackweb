@@ -1,12 +1,13 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import StopWatch from "./apps/StopWatch";
 import Clock from "./apps/Clock";
+import Sidebar from "./components/Sidebar";
 
 const App = () => {
   return (
     <div>
-      <h1>Navbar</h1>
       <BrowserRouter>
+        <Sidebar />
         <Routes>
           <Route path="/" element={<h1>Home Page</h1>} />
           <Route path="/stopwatch" element={<StopWatch />} />
