@@ -1,45 +1,28 @@
 import React, { useEffect, useState } from "react";
 
-const Clock = () => {
-  // const [second, setSecond] = useState(0);
-  // const [minute, setMinute] = useState(0);
-  // const [hour, setHour] = useState(0);
-
+const StopWatch = () => {
   const [stop, setStop] = useState(false);
-  const [reset, setReset] = useState(false);
-
   const [records, setRecords] = useState([]);
   const [time, setTime] = useState({
+    ms: 0,
     second: 0,
     minute: 0,
     hour: 0,
   });
 
   useEffect(() => {
+    if (stop) return;
+
     const timer = setInterval(() => {
-      // setSecond((prev) => {
-      //   if (prev === 59) {
-      //     setMinute((prev) => {
-      //       if (prev === 59) {
-      //         setHour((prev) => {
-      //           if (prev === 23) {
-      //             return 0;
-      //           }
-      //           return prev + 1;
-      //         });
-      //         return 0;
-      //       }
-      //       return prev + 1;
-      //     });
-      //     return 0;
-      //   }
-      //   return prev + 1;
-      // });
-
       setTime((prev) => {
-        let { second, minute, hour } = prev;
+        let { ms, second, minute, hour } = prev;
 
-        second++;
+        ms++;
+
+        if (ms === 100) {
+          ms = 0;
+          second = second + 1;
+        }
 
         if (second === 60) {
           second = 0;
@@ -56,41 +39,47 @@ const Clock = () => {
         }
 
         return {
+          ms,
           second,
           minute,
           hour,
         };
       });
-    }, 15);
-
-    if (stop) {
-      clearInterval(timer);
-    }
-
-    if (reset) {
-      clearInterval(timer);
-      setRecords([...records, `${time.hour}:${time.minute}:${time.second}`]);
-      setTime({
-        second: 0,
-        minute: 0,
-        hour: 0,
-      });
-      setStop(true);
-      setReset(false);
-    }
+    }, 10);
 
     return () => clearInterval(timer);
-  }, [stop, reset]);
+  }, [stop]);
 
-  const fs = (str) => {
-    return String(str).padStart(2, "0");
+  const handleStop = () => {
+    setStop(true);
+    setRecords([...records, formatTimeString(time)]);
+  };
+
+  const handleStart = () => {
+    setStop(false);
+  };
+
+  const handleReset = () => {
+    setTime({
+      ms: 0,
+      second: 0,
+      minute: 0,
+      hour: 0,
+    });
+    setStop(true);
+    setRecords([]);
+  };
+
+  const formatTimeString = (time) => {
+    const fs = (str) => String(str).padStart(2, "0");
+    return `${fs(time.hour)}:${fs(time.minute)}:${fs(time.second)}:${fs(time.ms)}`;
   };
 
   return (
     <div>
-      <button onClick={() => setReset(true)}>Reset</button>
-      <button onClick={() => setStop(!stop)}>{stop ? "Start" : "Stop"}</button>
-      {fs(time.hour)}:{fs(time.minute)}:{fs(time.second)}
+      <button onClick={handleReset}>Reset</button>
+      <button onClick={stop ? handleStart : handleStop}>{stop ? "Start" : "Stop"}</button>
+      {formatTimeString(time)}
       <br />
       <ul>
         {records.map((record) => (
@@ -101,4 +90,4 @@ const Clock = () => {
   );
 };
 
-export default Clock;
+export default StopWatch;

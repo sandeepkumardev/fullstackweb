@@ -1,37 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 const Clock = () => {
-  // const [second, setSecond] = useState(0);
-  // const [minute, setMinute] = useState(0);
-  // const [hour, setHour] = useState(0);
-
   const [time, setTime] = useState({
-    second: 57,
-    minute: 58,
-    hour: 23,
+    second: 0,
+    minute: 0,
+    hour: 0,
   });
 
   useEffect(() => {
     const timer = setInterval(() => {
-      // setSecond((prev) => {
-      //   if (prev === 59) {
-      //     setMinute((prev) => {
-      //       if (prev === 59) {
-      //         setHour((prev) => {
-      //           if (prev === 23) {
-      //             return 0;
-      //           }
-      //           return prev + 1;
-      //         });
-      //         return 0;
-      //       }
-      //       return prev + 1;
-      //     });
-      //     return 0;
-      //   }
-      //   return prev + 1;
-      // });
-
       setTime((prev) => {
         let { second, minute, hour } = prev;
 
