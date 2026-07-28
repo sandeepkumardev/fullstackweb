@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 
 const Clock = () => {
   const [time, setTime] = useState({
-    second: 0,
-    minute: 0,
-    hour: 0,
+    second: new Date().getSeconds(),
+    minute: new Date().getMinutes(),
+    hour: new Date().getHours(),
   });
 
   useEffect(() => {
