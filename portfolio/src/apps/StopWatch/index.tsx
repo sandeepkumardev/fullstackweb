@@ -72,7 +72,7 @@ const StopWatch = () => {
 
   const formatTimeString = (time: { hour: number; minute: number; second: number; ms: number }) => {
     const fs = (str: number) => String(str).padStart(2, "0");
-    return `${fs(time.hour)}:${fs(time.minute)}:${fs(time.second)}:${fs(time.ms)}`;
+    return `${fs(time.hour)}:${fs(time.minute)}:${fs(time.second)}.${fs(time.ms)}`;
   };
 
   return (
@@ -83,7 +83,23 @@ const StopWatch = () => {
         <p className="mt-2 text-center text-gray-400">Measure your time precisely</p>
 
         <div className="mt-8 text-center">
-          <span className="font-mono text-5xl sm:text-6xl md:text-7xl font-bold tracking-wider text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]">
+          <span
+            className="
+              block
+              w-full
+              text-center
+              font-mono
+              font-bold
+              tracking-wider
+              text-cyan-400
+              text-3xl
+              sm:text-5xl
+              md:text-6xl
+              lg:text-7xl
+              drop-shadow-[0_0_10px_rgba(34,211,238,0.8)]
+              break-all
+            "
+          >
             {formatTimeString(time)}
           </span>
         </div>
@@ -115,10 +131,23 @@ const StopWatch = () => {
             ) : (
               <ul className="space-y-3">
                 {records.map((record, index) => (
-                  <li key={index} className="flex items-center justify-between rounded-lg bg-white/5 px-4 py-3">
-                    <span className="text-gray-400">#{index + 1}</span>
-
-                    <span className="font-mono text-lg text-cyan-400">{record}</span>
+                  <li
+                    className="
+                      flex
+                      flex-col
+                      sm:flex-row
+                      items-center
+                      justify-between
+                      gap-2
+                      rounded-lg
+                      bg-white/5
+                      px-3
+                      py-3
+                    "
+                    key={index}
+                  >
+                    <span className="text-gray-400">Lap #{index + 1}</span>
+                    <span className="font-mono text-lg sm:text-xl text-cyan-400 break-all">{record}</span>
                   </li>
                 ))}
               </ul>
