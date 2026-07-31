@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 const StopWatch = () => {
-  const [stop, setStop] = useState(false);
+  const [stop, setStop] = useState(true);
   const [records, setRecords] = useState<string[]>([]);
   const [time, setTime] = useState({
     ms: 0,

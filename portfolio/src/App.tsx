@@ -1,8 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import StopWatch from "./apps/StopWatch";
-import Clock from "./apps/Clock";
 import Sidebar from "./components/Sidebar";
-import Todo from "./apps/Todo";
+import { appRoutes, authRoutes } from "./routes";
 
 const App = () => {
   return (
@@ -10,10 +8,12 @@ const App = () => {
       <BrowserRouter>
         <Sidebar />
         <Routes>
-          <Route path="/" element={<h1>Home Page</h1>} />
-          <Route path="/stopwatch" element={<StopWatch />} />
-          <Route path="/clock" element={<Clock />} />
-          <Route path="/todo" element={<Todo />} />
+          {appRoutes.map((route) => (
+            <Route path={route.path} element={<route.element />} />
+          ))}
+          {authRoutes.map((route) => (
+            <Route path={route.path} element={<route.element />} />
+          ))}
         </Routes>
       </BrowserRouter>
     </div>

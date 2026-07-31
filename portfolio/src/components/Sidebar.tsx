@@ -1,6 +1,7 @@
-import { ChevronRight, X, Clock3, Timer, ListTodo } from "lucide-react";
+import { ChevronRight, X, UserLock } from "lucide-react";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { appRoutes } from "../routes";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +27,7 @@ const Sidebar = () => {
           onClick={(e) => e.stopPropagation()}
           className={`absolute left-0 top-0 h-screen w-72 max-w-[80%] bg-slate-900 border-r border-white/10 shadow-2xl duration-300 ${
             isOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+          } flex flex-col`}
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-white/10 p-5">
@@ -41,12 +42,15 @@ const Sidebar = () => {
           </div>
 
           {/* Menu */}
-          <div className="space-y-2 p-4">
-            <ListItem icon={<Clock3 size={18} />} title="Clock" path="/clock" setIsOpen={setIsOpen} />
+          <div className="space-y-2 p-4 flex-1 overflow-y-auto scrollbar-thumb-amber-500">
+            {appRoutes.map((route) => (
+              <ListItem icon={route.icon} title={route.title} path={route.path} setIsOpen={setIsOpen} />
+            ))}
+          </div>
 
-            <ListItem icon={<Timer size={18} />} title="Stopwatch" path="/stopwatch" setIsOpen={setIsOpen} />
-
-            <ListItem icon={<ListTodo size={18} />} title="Todo" path="/todo" setIsOpen={setIsOpen} />
+          {/* Footer */}
+          <div className="space-y-2 border-t border-white/10 p-4">
+            <ListItem icon={UserLock} title="SignIn / Register" path="/signin" setIsOpen={setIsOpen} />
           </div>
         </div>
       </div>
@@ -55,12 +59,12 @@ const Sidebar = () => {
 };
 
 const ListItem = ({
-  icon,
+  icon: Icon,
   title,
   path,
   setIsOpen,
 }: {
-  icon: React.ReactNode;
+  icon: any;
   title: string;
   path: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -81,7 +85,7 @@ const ListItem = ({
         active ? "bg-cyan-500 text-white" : "text-gray-300 hover:bg-cyan-500 hover:text-white"
       }`}
     >
-      {icon}
+      <Icon />
       <span>{title}</span>
     </button>
   );
