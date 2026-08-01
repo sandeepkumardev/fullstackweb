@@ -5,12 +5,13 @@ import Clock from "./apps/Clock";
 import Todo from "./apps/Todo";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+import type { ElementType } from "react";
 
 interface IRoute {
   title: string;
   path: string;
-  icon: any;
-  element: any;
+  icon: ElementType;
+  element: ElementType;
 }
 
 export const appRoutes: IRoute[] = [
@@ -40,7 +41,7 @@ export const appRoutes: IRoute[] = [
   },
 ];
 
-export const authRoutes = [
+export const authRoutes: IRoute[] = [
   {
     title: "SignIn",
     path: "/signin",

@@ -1,5 +1,5 @@
 import { ChevronRight, X, UserLock } from "lucide-react";
-import { useState } from "react";
+import { useState, type ElementType } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { appRoutes } from "../routes";
 
@@ -64,7 +64,7 @@ const ListItem = ({
   path,
   setIsOpen,
 }: {
-  icon: any;
+  icon: ElementType;
   title: string;
   path: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
