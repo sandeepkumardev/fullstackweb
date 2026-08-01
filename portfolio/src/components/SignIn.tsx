@@ -1,6 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 const SignIn = () => {
+  const navigate = useNavigate();
+  const { setToken } = useAuth();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle sign-in logic here
+    setToken("dummy-token");
+    navigate("/");
+  };
   return (
     <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-900 via-indigo-950 to-black p-4">
       <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
@@ -8,7 +18,7 @@ const SignIn = () => {
 
         <p className="mt-2 text-center text-gray-400">Sign in to continue</p>
 
-        <form className="mt-8 space-y-5">
+        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           <div>
             <label className="mb-2 block text-sm text-gray-300">Email</label>
 

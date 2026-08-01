@@ -10,7 +10,7 @@ export default defineConfig([
   {
     files: ["**/*.{ts,tsx}"],
     rules: {
-      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-explicit-any": ["off", { allowConstantExport: true }],
     },
     extends: [
       js.configs.recommended,

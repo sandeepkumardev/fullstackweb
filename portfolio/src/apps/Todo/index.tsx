@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { v4 as uuid } from "uuid";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 interface ITodo {
   id: string;
@@ -9,6 +11,8 @@ interface ITodo {
 }
 
 const Todo = () => {
+  const navigate = useNavigate();
+  const { token } = useAuth();
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState<ITodo[]>([]);
 
@@ -46,6 +50,18 @@ const Todo = () => {
   useEffect(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/signin");
+    }
+  }, [token]);
+
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-slate-900 via-indigo-950 to-black flex justify-center items-center p-4 sm:p-8"></div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-900 via-indigo-950 to-black flex justify-center p-4 sm:p-8">
