@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import useAuth from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { withAuth } from "../../components/withAuth";
 
 const StopWatch = () => {
-  const navigate = useNavigate();
-  const { token } = useAuth();
   const [stop, setStop] = useState(true);
   const [records, setRecords] = useState<string[]>([]);
   const [time, setTime] = useState({
@@ -78,18 +75,6 @@ const StopWatch = () => {
     const fs = (str: number) => String(str).padStart(2, "0");
     return `${fs(time.hour)}:${fs(time.minute)}:${fs(time.second)}.${fs(time.ms)}`;
   };
-
-  useEffect(() => {
-    if (!token) {
-      navigate("/signin");
-    }
-  }, [token]);
-
-  if (!token) {
-    return (
-      <div className="min-h-screen bg-linear-to-br from-slate-900 via-indigo-950 to-black flex justify-center items-center p-4 sm:p-8"></div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-900 via-indigo-950 to-black flex items-center justify-center p-4">
@@ -175,4 +160,4 @@ const StopWatch = () => {
   );
 };
 
-export default StopWatch;
+export default withAuth(StopWatch);
