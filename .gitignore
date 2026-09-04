@@ -4,3 +4,6 @@ dist
 
 TypeScript_0-1.md
 todo.txt
+
+__pycache__
+.venv
