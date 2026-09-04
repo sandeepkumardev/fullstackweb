@@ -7,14 +7,35 @@ const App = () => {
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState([]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newTodo = { id: uuid(), task: input, completed: false };
-    setTodos([...todos, newTodo]);
+    const newTodo = { id: uuid(), title: input, completed: false };
+
+    try {
+      const response = await fetch("http://localhost:8000/todos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newTodo),
+      });
+      const data = await response.json();
+
+      if (!data.success) {
+        console.error("Error adding todo:", data.message);
+        return;
+      }
+
+      setTodos([...todos, newTodo]);
+    } catch (error) {
+      console.error("Error adding todo:", error);
+    }
+
     setInput("");
   };
 
   const handleCompleted = (id) => {
+    // server update call
     const updatedTodos = todos.map((obj) => {
       if (obj.id === id) {
         return { ...obj, completed: !obj.completed };
@@ -25,22 +46,38 @@ const App = () => {
   };
 
   const handleDelete = (id) => {
+    // server delte
+    // success - true
     const updatedTodos = todos.filter((obj) => obj.id !== id);
     setTodos(updatedTodos);
   };
 
-  useEffect(() => {
-    const storedTodos = localStorage.getItem("todos");
-    if (storedTodos) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTodos(JSON.parse(storedTodos));
+  const fetchTodosAPI = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/todos");
+      const data = await response.json();
+      console.log(data);
+      setTodos(data);
+    } catch (error) {
+      console.error("Error fetching todos:", error);
     }
+  };
+
+  useEffect(() => {
+    // api call to fastAPI server
+    fetchTodosAPI();
+
+    // const storedTodos = localStorage.getItem("todos");
+    // if (storedTodos) {
+    //   // eslint-disable-next-line react-hooks/set-state-in-effect
+    //   setTodos(JSON.parse(storedTodos));
+    // }
   }, []);
 
   //hook
-  useEffect(() => {
-    localStorage.setItem("todos", JSON.stringify(todos));
-  }, [todos]);
+  // useEffect(() => {
+  //   localStorage.setItem("todos", JSON.stringify(todos));
+  // }, [todos]);
 
   return (
     <div className="App">
@@ -69,7 +106,7 @@ const App = () => {
           return (
             <div key={index} className="todo_item">
               <input checked={todo.completed} type="radio" onChange={() => handleCompleted(todo.id)} />
-              <p>{todo.task}</p>
+              <p>{todo.title}</p>
               <Trash2 onClick={() => handleDelete(todo.id)} />
             </div>
           );
