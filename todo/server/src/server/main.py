@@ -3,10 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-todos = [
-    { "id": 1, "title": "Learn FastAPI", "completed": False },
-    { "id": 2, "title": "Build a Todo API", "completed": False }
-]
+todos = []
 
 app.add_middleware(
     CORSMiddleware,
@@ -36,7 +33,7 @@ def create_todo(body: dict):
     return {"success": True, "message": "Todo created successfully!", "todo": newTodo}
 
 @app.put("/todos/{todo_id}")
-def update_todo(todo_id: int, body: dict):
+def update_todo(todo_id: str, body: dict):
     for todo in todos:
         if todo["id"] == todo_id:
             todo["title"] = body.get("title", todo["title"])
@@ -45,7 +42,7 @@ def update_todo(todo_id: int, body: dict):
     return {"success": True, "message": "Todo updated successfully!"}
 
 @app.delete("/todos/{todo_id}")
-def delete_todo(todo_id: int):
+def delete_todo(todo_id: str):
     for todo in todos:
         if todo["id"] == todo_id:
             todos.remove(todo)

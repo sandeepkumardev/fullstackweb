@@ -34,29 +34,62 @@ const App = () => {
     setInput("");
   };
 
-  const handleCompleted = (id) => {
-    // server update call
-    const updatedTodos = todos.map((obj) => {
-      if (obj.id === id) {
-        return { ...obj, completed: !obj.completed };
+  const handleCompleted = async (id) => {
+    try {
+      // find current todo status
+      const status = todos.find((obj) => obj.id === id).completed;
+
+      const response = await fetch(`http://localhost:8000/todos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ completed: !status }),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        console.error("Error updating todo:", data.message);
+        return;
       }
-      return obj;
-    });
-    setTodos(updatedTodos);
+
+      const updatedTodos = todos.map((obj) => {
+        if (obj.id === id) {
+          return { ...obj, completed: !obj.completed };
+        }
+        return obj;
+      });
+      setTodos(updatedTodos);
+    } catch (error) {
+      console.error("Error updating todo:", error);
+    }
   };
 
-  const handleDelete = (id) => {
-    // server delte
-    // success - true
-    const updatedTodos = todos.filter((obj) => obj.id !== id);
-    setTodos(updatedTodos);
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8000/todos/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        console.error("Error deleting todo:", data.message);
+        return;
+      }
+
+      const updatedTodos = todos.filter((obj) => obj.id !== id);
+      setTodos(updatedTodos);
+    } catch (error) {
+      console.error("Error deleting todo:", error);
+    }
   };
 
   const fetchTodosAPI = async () => {
     try {
       const response = await fetch("http://localhost:8000/todos");
       const data = await response.json();
-      console.log(data);
       setTodos(data);
     } catch (error) {
       console.error("Error fetching todos:", error);
@@ -66,18 +99,7 @@ const App = () => {
   useEffect(() => {
     // api call to fastAPI server
     fetchTodosAPI();
-
-    // const storedTodos = localStorage.getItem("todos");
-    // if (storedTodos) {
-    //   // eslint-disable-next-line react-hooks/set-state-in-effect
-    //   setTodos(JSON.parse(storedTodos));
-    // }
   }, []);
-
-  //hook
-  // useEffect(() => {
-  //   localStorage.setItem("todos", JSON.stringify(todos));
-  // }, [todos]);
 
   return (
     <div className="App">
