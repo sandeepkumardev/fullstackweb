@@ -1,140 +1,21 @@
-import { useEffect, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
-import "./App.css";
-import { v4 as uuid } from "uuid";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Todos from "./pages/Todos";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
+import NotFound from "./pages/NotFound";
+import Header from "./components/Header";
 
 const App = () => {
-  const [input, setInput] = useState("");
-  const [todos, setTodos] = useState([]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const newTodo = { id: uuid(), title: input, completed: false };
-
-    try {
-      const response = await fetch("http://localhost:8000/todos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTodo),
-      });
-      const data = await response.json();
-
-      if (!data.success) {
-        console.error("Error adding todo:", data.message);
-        return;
-      }
-
-      setTodos([...todos, newTodo]);
-    } catch (error) {
-      console.error("Error adding todo:", error);
-    }
-
-    setInput("");
-  };
-
-  const handleCompleted = async (id) => {
-    try {
-      // find current todo status
-      const status = todos.find((obj) => obj.id === id).completed;
-
-      const response = await fetch(`http://localhost:8000/todos/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ completed: !status }),
-      });
-
-      const data = await response.json();
-
-      if (!data.success) {
-        console.error("Error updating todo:", data.message);
-        return;
-      }
-
-      const updatedTodos = todos.map((obj) => {
-        if (obj.id === id) {
-          return { ...obj, completed: !obj.completed };
-        }
-        return obj;
-      });
-      setTodos(updatedTodos);
-    } catch (error) {
-      console.error("Error updating todo:", error);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:8000/todos/${id}`, {
-        method: "DELETE",
-      });
-
-      const data = await response.json();
-
-      if (!data.success) {
-        console.error("Error deleting todo:", data.message);
-        return;
-      }
-
-      const updatedTodos = todos.filter((obj) => obj.id !== id);
-      setTodos(updatedTodos);
-    } catch (error) {
-      console.error("Error deleting todo:", error);
-    }
-  };
-
-  const fetchTodosAPI = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/todos");
-      const data = await response.json();
-      setTodos(data);
-    } catch (error) {
-      console.error("Error fetching todos:", error);
-    }
-  };
-
-  useEffect(() => {
-    // api call to fastAPI server
-    fetchTodosAPI();
-  }, []);
-
   return (
-    <div className="App">
-      <h1 className="heading font">TODO</h1>
-
-      <h6 className="font">Manage your day!</h6>
-
-      <form onSubmit={handleSubmit} className="form">
-        <input value={input} onChange={(e) => setInput(e.target.value)} />
-        <button type="submit">
-          <Plus className="icon" />
-        </button>
-      </form>
-
-      <div className="todos_container">
-        {todos.length === 0 && (
-          <div className="tips">
-            Add Your First To-Do Item! <br />
-            📝 Usage Tips 💡: <br /> ✔️ Press Enter to submit actions. <br /> ✔️ Drag to reorder your to-dos (PC only) <br />{" "}
-            ✔️ Double-click to edit slogan and tasks. <br /> ✔️ Access quick actions in the right sidebar. <br /> 🔒 Your
-            data is stored locally in your browser. <br /> 📝 Supports data download and import.
-          </div>
-        )}
-
-        {todos.map((todo, index) => {
-          return (
-            <div key={index} className="todo_item">
-              <input checked={todo.completed} type="radio" onChange={() => handleCompleted(todo.id)} />
-              <p>{todo.title}</p>
-              <Trash2 onClick={() => handleDelete(todo.id)} />
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    <BrowserRouter>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Todos />} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
