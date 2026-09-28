@@ -19,5 +19,5 @@ def create_tables():
   SQLModel.metadata.create_all(engine)
 
 app.include_router(baseRoutes)
-app.include_router(authRoutes)
-app.include_router(todoRoutes)
+app.include_router(authRoutes, prefix="/auth")
+app.include_router(todoRoutes, prefix="/todos")

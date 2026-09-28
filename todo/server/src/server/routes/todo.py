@@ -6,15 +6,17 @@ import uuid
 
 router = APIRouter()
 
-@router.get("/todos")
+@router.get("")
 def get_todos(db: Session = Depends(get_db)):
     try:
+        # get current user
+        # token - jwt - verify - userid
         todos = db.exec(select(Todo)).all()
         return {"success": True, "todos": todos}
     except Exception as e:
         return {"success": False, "message": str(e)}
     
-@router.post("/todos")
+@router.post("")
 def create_todo(body: TodoCreate, db: Session = Depends(get_db)):
     try:
         newTodo = Todo(
@@ -29,7 +31,7 @@ def create_todo(body: TodoCreate, db: Session = Depends(get_db)):
     except Exception as e:
         return {"success": False, "message": str(e)}
 
-@router.put("/todos/{todo_id}")
+@router.put("/{todo_id}")
 def update_todo(todo_id: str, body: TodoUpdate, db: Session = Depends(get_db)):
     try:
         todo = db.get(Todo, todo_id)
@@ -50,7 +52,7 @@ def update_todo(todo_id: str, body: TodoUpdate, db: Session = Depends(get_db)):
         return {"success": False, "message": str(e)}
 
 
-@router.delete("/todos/{todo_id}")
+@router.delete("/{todo_id}")
 def delete_todo(todo_id: str, db: Session = Depends(get_db)):
     try:
         todo = db.get(Todo, todo_id)
