@@ -41,7 +41,6 @@ def register(body: UserRegister, db: Session = Depends(get_db)):
          return {"success": False, "message": "User already exists!"}
 
       newUser = User(
-         id = uuid.uuid4(),
          name = body.name,
          email = body.email,
          password = password_hash.hash(body.password)

@@ -5,10 +5,12 @@ secret_key = "glijsj9tuy9hrg9rh"
 alg = "HS256"
 
 def generate_token(user_id):
+    now = datetime.now(timezone.utc)
+
     payload = {
-        "sub": user_id,
-        "iat": datetime.now(timezone.utc),
-        "exp": datetime.now(timezone.utc) + timedelta(days=1),
+        "sub": str(user_id),
+        "iat": now,
+        "exp": now + timedelta(days=30),
     }
 
     token = jwt.encode(payload, secret_key, algorithm=alg)
