@@ -1,24 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/auth.scss";
 import { Eye, EyeClosed } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(form);
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:8000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+      const data = await response.json();
+
+      if (!data.success) {
+        console.error("Error signing in:", data.message);
+        return;
+      }
+
+      localStorage.setItem("token", data.access_token);
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing in:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <div className="auth-container">
@@ -43,7 +75,13 @@ const SignIn = () => {
               )}
             </span>
           </div>
-          <button type="submit">Sign In</button>
+          <button
+            type="submit"
+            disabled={loading}
+            style={{ cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.5 : 1 }}
+          >
+            {loading ? "loading..." : "Sign In"}
+          </button>
         </form>
 
         <p>

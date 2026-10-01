@@ -1,23 +1,25 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import "../styles/todos.scss";
-import { v4 as uuid } from "uuid";
+import withAuth from "../components/withAuth";
+import { userContext } from "../context/user.context";
 
 const Todos = () => {
+  const { user } = useContext(userContext);
   const [input, setInput] = useState("");
   const [todos, setTodos] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newTodo = { id: uuid(), title: input, completed: false };
 
     try {
       const response = await fetch("http://localhost:8000/todos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(newTodo),
+        body: JSON.stringify({ title: input, user_id: user.id }),
       });
       const data = await response.json();
 
@@ -26,7 +28,7 @@ const Todos = () => {
         return;
       }
 
-      setTodos([...todos, newTodo]);
+      setTodos([...todos]);
     } catch (error) {
       console.error("Error adding todo:", error);
     }
@@ -43,6 +45,7 @@ const Todos = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ completed: !status }),
       });
@@ -70,6 +73,9 @@ const Todos = () => {
     try {
       const response = await fetch(`http://localhost:8000/todos/${id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       const data = await response.json();
@@ -88,10 +94,14 @@ const Todos = () => {
 
   const fetchTodosAPI = async () => {
     try {
-      const response = await fetch("http://localhost:8000/todos");
+      const response = await fetch("http://localhost:8000/todos", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       const data = await response.json();
-      console.log(data);
-      // setTodos(data);
+      setTodos(data.todos);
     } catch (error) {
       console.error("Error fetching todos:", error);
     }
@@ -139,4 +149,4 @@ const Todos = () => {
   );
 };
 
-export default Todos;
+export default withAuth(Todos);

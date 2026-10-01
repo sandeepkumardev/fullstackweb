@@ -5,9 +5,25 @@ from server.database.base import get_db
 import uuid
 from pwdlib import PasswordHash
 from server.services.jwt import generate_token
+from server.services.user import get_current_user
 
 router = APIRouter()
 password_hash = PasswordHash.recommended()
+
+@router.get("/me")
+def get_user(db: Session = Depends(get_db), payload: str = Depends(get_current_user)):
+    try:
+        if payload["success"] is False:
+            return {"success": False, "message": payload["message"]}
+        
+        user = db.exec(select(User).where(User.id == payload["user_id"])).first()
+        return {"success": True, "user": {
+            "id": user.id, 
+            "name": user.name, 
+            "email": user.email
+        }}
+    except Exception as e:
+        return {"success": False, "message": str(e)}
 
 @router.post("/login")
 def login(body: UserLogIn, db: Session = Depends(get_db)):
