@@ -30,8 +30,9 @@ def create_todo(body: TodoCreate, db: Session = Depends(get_db), payload: str = 
     
         db.add(newTodo)
         db.commit()
+        db.refresh(newTodo)
         
-        return {"success": True, "message": "Todo created successfully!"}
+        return {"success": True, "message": "Todo created successfully!", "todo": newTodo}
     except Exception as e:
         return {"success": False, "message": str(e)}
 

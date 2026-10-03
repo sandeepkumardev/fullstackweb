@@ -9,18 +9,40 @@ const SignUp = () => {
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    confirm_password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(form);
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:8000/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+      const data = await response.json();
+
+      if (!data.success) {
+        console.error("Error signing in:", data.message);
+        return;
+      }
+
+      navigate("/signin");
+    } catch (error) {
+      console.error("Error signing in:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -58,10 +80,10 @@ const SignUp = () => {
           <div className="password">
             <input
               type={showPassword ? "text" : "password"}
-              name="confirmPassword"
+              name="confirm_password"
               placeholder="Confirm Password"
               onChange={handleChange}
-              value={form.confirmPassword}
+              value={form.confirm_password}
             />
             <span>
               {showPassword ? (
@@ -71,7 +93,9 @@ const SignUp = () => {
               )}
             </span>
           </div>
-          <button type="submit">Sign Up</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "loading..." : "Sign Up"}
+          </button>
         </form>
 
         <p>

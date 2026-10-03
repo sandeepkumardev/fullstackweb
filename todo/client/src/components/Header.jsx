@@ -1,8 +1,10 @@
 import { UserCircle2 } from "lucide-react";
 import "../styles/header.scss";
 import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const Header = () => {
+  const { user } = useAuth();
   return (
     <div className="header">
       <Link to="/">
@@ -10,7 +12,7 @@ const Header = () => {
       </Link>
 
       <div className="auth">
-        <Link to="/signin">
+        <Link to={user ? "/profile" : "/signin"}>
           <UserCircle2 />
         </Link>
       </div>

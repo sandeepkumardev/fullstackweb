@@ -10,7 +10,7 @@ class User(SQLModel, table=True):
 class UserRegister(SQLModel):
   name: str
   email: str
-  password: str = Field(min_length=8)
+  password: str
   confirm_password: str
 
 class UserLogIn(SQLModel):

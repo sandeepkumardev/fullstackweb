@@ -48,6 +48,9 @@ def login(body: UserLogIn, db: Session = Depends(get_db)):
 @router.post("/register")
 def register(body: UserRegister, db: Session = Depends(get_db)):
    try:
+      if len(body.password) < 8:
+         return {"success": False, "message": "Password must be at least 8 characters long!"}
+
       if body.password != body.confirm_password:
          return {"success": False, "message": "Passwords do not match!"}
 
