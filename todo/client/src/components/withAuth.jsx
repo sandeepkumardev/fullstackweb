@@ -34,11 +34,11 @@ const withAuth = (Component) => {
     useEffect(() => {
       const token = localStorage.getItem("token") || null;
 
-      if (token && !user) {
-        getUser(token);
-        return;
-      } else if (!token) {
+      if (!token) {
         navigate("/signin");
+        return;
+      } else if (!user && !userLoading) {
+        getUser(token);
       }
     }, [user, userLoading]);
 
