@@ -93,17 +93,17 @@ svg {
   cursor: pointer;
 }
 
-.todo_item input[type="checkbox"] {
+.todo_item .checkbox {
   appearance: none;
   border: 2px solid gray;
   border-radius: 50%;
 }
 
-.todo_item input[type="checkbox"]:checked {
+.todo_item .checkbox:checked {
   background-color: gray;
 }
 
-.todo_item:has(input:not(:checked):hover) {
+.todo_item:has(.checkbox:not(:checked):hover) {
   background-color: var(--success-foreground);
 }
 
@@ -115,7 +115,7 @@ svg {
   background-color: var(--accent-foreground);
 }
 
-.todo_item:has(input:checked) {
+.todo_item:has(.checkbox:checked) {
   text-decoration: line-through;
   color: gray;
 }
@@ -202,4 +202,18 @@ svg {
 
 .todo_item:hover .trash {
   display: block;
+}
+
+.edit_input {
+  width: 100% !important;
+  border: none;
+  outline: none;
+  font-size: 30px;
+  font-family: var(--martel-sans);
+  padding: 10px;
+  height: 60px !important;
+  border-radius: 8px;
+  padding-left: 32px;
+  padding-top: 15px;
+  font-weight: 600;
 }

@@ -12,6 +12,7 @@ const Todos = () => {
   const { todos, todosLoading, setTodos, setTodosLoading } = useContext(todosContext);
   // const [todos, setTodos] = useState([]);
   // const [todosLoading, setTodosLoading] = useState(false);
+  const [editInput, setEditInput] = useState("");
   const [addingTodo, setAddingTodo] = useState(false);
   const [updateStatus, setUpdateStatus] = useState(false);
   const [editingTodo, setEditingTodo] = useState(null);
@@ -23,6 +24,8 @@ const Todos = () => {
 
     setAddingTodo(true);
     try {
+      if (input.length === 0) return;
+
       const response = await fetch("http://localhost:8000/todos", {
         method: "POST",
         headers: {
@@ -44,6 +47,40 @@ const Todos = () => {
     } finally {
       setAddingTodo(false);
       setInput("");
+    }
+  };
+
+  const handleEdit = async (id, title) => {
+    setEditingTodo(id);
+    try {
+      if (title.length === 0) return;
+
+      const response = await fetch(`http://localhost:8000/todos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ title: title, user_id: user.id }),
+      });
+      const data = await response.json();
+
+      if (!data.success) {
+        console.error("Error updating todo:", data.message);
+        return;
+      }
+
+      const updatedTodos = todos.map((obj) => {
+        if (obj.id === id) {
+          return { ...obj, title: title };
+        }
+        return obj;
+      });
+      setTodos(updatedTodos);
+    } catch (error) {
+      console.error("Error updating todo:", error);
+    } finally {
+      setEditingTodo(null);
     }
   };
 
@@ -196,13 +233,34 @@ const Todos = () => {
 
         {todos.map((todo, index) => {
           return (
-            <div key={index} className="todo_item">
-              {updateStatus === todo.id ? (
-                <Loader2 className="spin" />
+            <div key={index} className={`todo_item ${editingTodo === todo.id ? "editing" : ""}`}>
+              {editingTodo === todo.id ? (
+                <input
+                  name="edit_todo"
+                  value={editInput}
+                  onChange={(e) => setEditInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleEdit(todo.id, editInput)}
+                  onBlur={() => setEditingTodo(null)}
+                  autoFocus
+                  className="edit_input"
+                />
               ) : (
-                <input checked={todo.completed} type="checkbox" onChange={() => handleCompleted(todo.id)} />
+                <>
+                  {updateStatus === todo.id ? (
+                    <Loader2 className="spin" />
+                  ) : (
+                    <input
+                      className="checkbox"
+                      checked={todo.completed}
+                      type="checkbox"
+                      onChange={() => handleCompleted(todo.id)}
+                    />
+                  )}
+
+                  <p>{todo.title}</p>
+                </>
               )}
-              <p>{todo.title}</p>
+
               {deletingTodo === todo.id ? (
                 <Loader2 className="spin trash" />
               ) : (
@@ -215,7 +273,13 @@ const Todos = () => {
                 <PlusCircle className="duplicate" onClick={() => handleDuplicate(todo)} />
               )}
 
-              <PenSquare className="edit" />
+              <PenSquare
+                className="edit"
+                onClick={() => {
+                  setEditingTodo(todo.id);
+                  setEditInput(todo.title);
+                }}
+              />
             </div>
           );
         })}
