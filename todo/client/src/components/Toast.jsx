@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../styles/toast.scss";
-import { todosContext } from "../context/todo.context";
+import { useApp } from "../hooks/useApp";
 
 const Toast = () => {
-  const { toast, setToast } = useContext(todosContext);
+  const { toast, setToast } = useApp();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {

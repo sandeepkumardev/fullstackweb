@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import "../styles/auth.scss";
 import { Eye, EyeClosed } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useApp } from "../hooks/useApp";
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { setToast } = useApp();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -21,6 +23,16 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (form.name.length === 0 || form.email.length === 0 || form.password.length === 0) {
+      setToast({ type: "error", message: "Please enter your name, email and password!" });
+      return;
+    }
+
+    if (form.password !== form.confirm_password) {
+      setToast({ type: "error", message: "Passwords do not match!" });
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch("http://localhost:8000/auth/register", {
@@ -34,12 +46,15 @@ const SignUp = () => {
 
       if (!data.success) {
         console.error("Error signing in:", data.message);
+        setToast({ type: "error", message: data.message });
         return;
       }
 
+      setToast({ type: "success", message: "Account created successfully!" });
       navigate("/signin");
     } catch (error) {
       console.error("Error signing in:", error);
+      setToast({ type: "error", message: "Error signing up!" });
     } finally {
       setLoading(false);
     }

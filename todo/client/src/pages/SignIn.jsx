@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import "../styles/auth.scss";
 import { Eye, EyeClosed } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useApp } from "../hooks/useApp";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const { setToast } = useApp();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -19,6 +21,11 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (form.email.length === 0 || form.password.length === 0) {
+      setToast({ type: "error", message: "Please enter your email and password!" });
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch("http://localhost:8000/auth/login", {
@@ -32,13 +39,16 @@ const SignIn = () => {
 
       if (!data.success) {
         console.error("Error signing in:", data.message);
+        setToast({ type: "error", message: data.message });
         return;
       }
 
+      setToast({ type: "success", message: "Logged in successfully!" });
       localStorage.setItem("token", data.access_token);
       navigate("/");
     } catch (error) {
       console.error("Error signing in:", error);
+      setToast({ type: "error", message: "Error signing in!" });
     } finally {
       setLoading(false);
     }

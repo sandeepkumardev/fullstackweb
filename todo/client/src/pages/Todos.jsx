@@ -4,12 +4,14 @@ import "../styles/todos.scss";
 import withAuth from "../components/withAuth";
 import { useAuth } from "../hooks/useAuth";
 import { todosContext } from "../context/todo.context";
+import { useApp } from "../hooks/useApp";
 
 const Todos = () => {
   const inputRef = useRef(null);
   const { user } = useAuth();
+  const { setToast } = useApp();
   const [input, setInput] = useState("");
-  const { todos, todosLoading, setTodos, setTodosLoading, setToast } = useContext(todosContext);
+  const { todos, todosLoading, setTodos, setTodosLoading } = useContext(todosContext);
   // const [todos, setTodos] = useState([]);
   // const [todosLoading, setTodosLoading] = useState(false);
   const [editInput, setEditInput] = useState("");
@@ -41,6 +43,7 @@ const Todos = () => {
 
       if (!data.success) {
         console.error("Error adding todo:", data.message);
+        setToast({ type: "error", message: data.message });
         return;
       }
 
@@ -75,6 +78,7 @@ const Todos = () => {
 
       if (!data.success) {
         console.error("Error updating todo:", data.message);
+        setToast({ type: "error", message: data.message });
         return;
       }
 
@@ -109,6 +113,7 @@ const Todos = () => {
 
       if (!data.success) {
         console.error("Error adding todo:", data.message);
+        setToast({ type: "error", message: data.message });
         return;
       }
 
@@ -141,6 +146,7 @@ const Todos = () => {
 
       if (!data.success) {
         console.error("Error updating todo:", data.message);
+        setToast({ type: "error", message: data.message });
         return;
       }
 
@@ -179,6 +185,7 @@ const Todos = () => {
 
       if (!data.success) {
         console.error("Error deleting todo:", data.message);
+        setToast({ type: "error", message: data.message });
         setTodos([...updatedTodos, todo]);
         return;
       }

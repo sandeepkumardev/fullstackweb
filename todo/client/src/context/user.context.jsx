@@ -9,6 +9,7 @@ const UserContext = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
+    window.location.href = "/signin";
   };
 
   return (
