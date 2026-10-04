@@ -9,7 +9,7 @@ const Todos = () => {
   const inputRef = useRef(null);
   const { user } = useAuth();
   const [input, setInput] = useState("");
-  const { todos, todosLoading, setTodos, setTodosLoading } = useContext(todosContext);
+  const { todos, todosLoading, setTodos, setTodosLoading, setToast } = useContext(todosContext);
   // const [todos, setTodos] = useState([]);
   // const [todosLoading, setTodosLoading] = useState(false);
   const [editInput, setEditInput] = useState("");
@@ -24,7 +24,10 @@ const Todos = () => {
 
     setAddingTodo(true);
     try {
-      if (input.length === 0) return;
+      if (input.length === 0) {
+        setToast({ type: "error", message: "Please enter a todo title!" });
+        return;
+      }
 
       const response = await fetch("http://localhost:8000/todos", {
         method: "POST",
@@ -42,8 +45,10 @@ const Todos = () => {
       }
 
       setTodos([...todos, data.todo]);
+      setToast({ type: "success", message: "Todo added successfully!" });
     } catch (error) {
       console.error("Error adding todo:", error);
+      setToast({ type: "error", message: "Error adding todo!" });
     } finally {
       setAddingTodo(false);
       setInput("");
@@ -53,7 +58,10 @@ const Todos = () => {
   const handleEdit = async (id, title) => {
     setEditingTodo(id);
     try {
-      if (title.length === 0) return;
+      if (title.length === 0) {
+        setToast({ type: "error", message: "Todo title cannot be empty!" });
+        return;
+      }
 
       const response = await fetch(`http://localhost:8000/todos/${id}`, {
         method: "PUT",
@@ -77,8 +85,10 @@ const Todos = () => {
         return obj;
       });
       setTodos(updatedTodos);
+      setToast({ type: "success", message: "Todo updated successfully!" });
     } catch (error) {
       console.error("Error updating todo:", error);
+      setToast({ type: "error", message: "Error updating todo!" });
     } finally {
       setEditingTodo(null);
     }
@@ -103,8 +113,10 @@ const Todos = () => {
       }
 
       setTodos([...todos, data.todo]);
+      setToast({ type: "success", message: "Todo added successfully!" });
     } catch (error) {
       console.error("Error adding todo:", error);
+      setToast({ type: "error", message: "Error adding todo!" });
     } finally {
       setDuplicateTodo(null);
     }
@@ -139,8 +151,10 @@ const Todos = () => {
         return obj;
       });
       setTodos(updatedTodos);
+      setToast({ type: "success", message: "Todo updated successfully!" });
     } catch (error) {
       console.error("Error updating todo:", error);
+      setToast({ type: "error", message: "Error updating todo!" });
     } finally {
       setUpdateStatus(null);
     }
@@ -169,9 +183,10 @@ const Todos = () => {
         return;
       }
 
-      console.log("deleted");
+      setToast({ type: "success", message: "Todo deleted successfully!" });
     } catch (error) {
       console.error("Error deleting todo:", error);
+      setToast({ type: "error", message: "Error deleting todo!" });
     } finally {
       setDeletingTodo(null);
     }
@@ -190,6 +205,7 @@ const Todos = () => {
       setTodos(data.todos);
     } catch (error) {
       console.error("Error fetching todos:", error);
+      setToast({ type: "error", message: "Error fetching todos!" });
     } finally {
       setTodosLoading(false);
     }

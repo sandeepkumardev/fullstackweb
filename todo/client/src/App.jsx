@@ -5,6 +5,7 @@ import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import Header from "./components/Header";
 import Profile from "./pages/Profile";
+import Toast from "./components/Toast";
 
 const App = () => {
   return (
@@ -17,6 +18,8 @@ const App = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+
+      <Toast />
     </BrowserRouter>
   );
 };
