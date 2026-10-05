@@ -2,18 +2,14 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Loader, Loader2, PenSquare, Plus, PlusCircle, Trash2 } from "lucide-react";
 import "../styles/todos.scss";
 import withAuth from "../components/withAuth";
-import { useAuth } from "../hooks/useAuth";
 import { todosContext } from "../context/todo.context";
 import { useApp } from "../hooks/useApp";
 
 const Todos = () => {
   const inputRef = useRef(null);
-  const { user } = useAuth();
   const { setToast } = useApp();
   const [input, setInput] = useState("");
   const { todos, todosLoading, setTodos, setTodosLoading } = useContext(todosContext);
-  // const [todos, setTodos] = useState([]);
-  // const [todosLoading, setTodosLoading] = useState(false);
   const [editInput, setEditInput] = useState("");
   const [addingTodo, setAddingTodo] = useState(false);
   const [updateStatus, setUpdateStatus] = useState(false);
@@ -37,7 +33,7 @@ const Todos = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ title: input, user_id: user.id }),
+        body: JSON.stringify({ title: input }),
       });
       const data = await response.json();
 
@@ -72,7 +68,7 @@ const Todos = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ title: title, user_id: user.id }),
+        body: JSON.stringify({ title: title }),
       });
       const data = await response.json();
 
@@ -107,7 +103,7 @@ const Todos = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ title: title, user_id: user.id }),
+        body: JSON.stringify({ title: title }),
       });
       const data = await response.json();
 
