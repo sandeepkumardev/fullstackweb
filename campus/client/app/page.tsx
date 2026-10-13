@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const page = () => {
+export default function Home() {
   return (
     <div>
       <Link href="/register-college">Register College</Link>
@@ -8,6 +8,4 @@ const page = () => {
       <Link href="/design-system">Design System</Link>
     </div>
   );
-};
-
-export default page;
+}

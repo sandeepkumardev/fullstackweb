@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { AuthRegistryPanel } from "@/components/patterns/auth-registry-panel";
-import { StepIndicator } from "@/components/patterns/step-indicator";
+import { AuthRegistryPanel } from "@/components/shared/auth-registry-panel";
+import { StepIndicator } from "@/components/shared/step-indicator";
 
 const steps = [{ label: "College" }, { label: "Owner" }, { label: "Verification" }, { label: "Done" }];
 
@@ -180,7 +180,7 @@ export default function RegisterCollegePage() {
                   <span className="font-mono text-body-sm">CC-22911</span>
                 </div>
               </Card>
-              <Button size="lg" asChild className="w-full max-w-sm text-primary-foreground">
+              <Button size="lg" className="w-full max-w-sm text-primary-foreground">
                 <Link href="/signin">Go to sign in</Link>
               </Button>
             </section>
