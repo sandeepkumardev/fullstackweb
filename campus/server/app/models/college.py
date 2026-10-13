@@ -27,6 +27,16 @@ class College(Base):
     nullable=False
   )
 
+  website: Mapped[str] = mapped_column(
+    String(150),
+    nullable=True
+  )
+
+  logo: Mapped[str] = mapped_column(
+    String,
+    nullable=True
+  )
+
   created_at: Mapped[datetime] = mapped_column(
     DateTime(timezone=True),
     default=lambda: datetime.now(timezone.utc),
