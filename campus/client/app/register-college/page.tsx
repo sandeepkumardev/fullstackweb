@@ -9,6 +9,11 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { AuthRegistryPanel } from "@/components/shared/auth-registry-panel";
 import { StepIndicator } from "@/components/shared/step-indicator";
+import { useForm } from "react-hook-form";
+import { registerCollegeSchema, RegisterCollegeTypes } from "@/schemas/register-college";
+import { zodResolver } from "@hookform/resolvers/zod";
+import CollegeInfo from "./_components/CollegeInfo";
+import OwnerDetails from "./_components/OwnerDetails";
 
 const steps = [{ label: "College" }, { label: "Owner" }, { label: "Verification" }, { label: "Done" }];
 
@@ -27,6 +32,25 @@ export default function RegisterCollegePage() {
   const [step, setStep] = useState(1);
   const next = () => setStep((s) => Math.min(s + 1, 4));
   const back = () => setStep((s) => Math.max(s - 1, 1));
+
+  const { handleSubmit, register, formState, getValues, getErrors, trigger } = useForm<RegisterCollegeTypes>({
+    mode: "all",
+    resolver: zodResolver(registerCollegeSchema),
+    defaultValues: {
+      collegeName: "MIT",
+      collegeEmail: "admin@mit.edu",
+      website: "https://mit.edu",
+      phone: "123-456-7890",
+      address: "123 Campus Drive",
+      city: "Austin",
+      state: "Texas",
+      ownerName: "",
+      ownerEmail: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+  const errors = formState.errors;
 
   return (
     <div className="flex min-h-screen">
@@ -47,95 +71,9 @@ export default function RegisterCollegePage() {
             </div>
           )}
 
-          {step === 1 && (
-            <section className="space-y-6 animate-fade-up">
-              <div className="space-y-1.5">
-                <h1 className="font-display text-display-lg">Tell us about your college</h1>
-                <p className="text-body-md text-muted-foreground">
-                  This creates your college&rsquo;s public profile inside CampusConnect.
-                </p>
-              </div>
+          {step === 1 && <CollegeInfo register={register} trigger={trigger} errors={errors} next={next} />}
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label htmlFor="college-name">College name</Label>
-                  <Input id="college-name" placeholder="Meridian State College" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="college-email">College email</Label>
-                  <Input id="college-email" type="email" placeholder="admin@meridian.edu" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="website">Website</Label>
-                  <Input id="website" placeholder="www.meridian.edu" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" type="tel" placeholder="+1 (555) 000-0000" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="address">Address</Label>
-                  <Input id="address" placeholder="500 Campus Drive" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="city">City</Label>
-                  <Input id="city" placeholder="Austin" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="state">State</Label>
-                  <Input id="state" placeholder="Texas" />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-2">
-                <Link href="/signin" className="text-body-sm text-muted-foreground hover:text-foreground">
-                  Already registered? Sign in
-                </Link>
-                <Button size="lg" onClick={next} className="gap-1.5 text-primary-foreground">
-                  Continue <ArrowRight className="size-4" />
-                </Button>
-              </div>
-            </section>
-          )}
-
-          {step === 2 && (
-            <section className="space-y-6 animate-fade-up">
-              <div className="space-y-1.5">
-                <h1 className="font-display text-display-lg">You&rsquo;ll be the College Owner</h1>
-                <p className="text-body-md text-muted-foreground">
-                  This account manages departments, teachers, and students.
-                </p>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label htmlFor="full-name">Full name</Label>
-                  <Input id="full-name" placeholder="Dr. Elena Marsh" />
-                </div>
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label htmlFor="owner-email">Email</Label>
-                  <Input id="owner-email" type="email" placeholder="elena.marsh@meridian.edu" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" placeholder="**********" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="confirm-password">Confirm password</Label>
-                  <Input id="confirm-password" type="password" placeholder="**********" />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-2">
-                <Button variant="ghost" onClick={back} className="gap-1.5">
-                  <ArrowLeft className="size-4" /> Back
-                </Button>
-                <Button size="lg" onClick={next} className="gap-1.5 text-primary-foreground">
-                  Continue <ArrowRight className="size-4" />
-                </Button>
-              </div>
-            </section>
-          )}
+          {step === 2 && <OwnerDetails register={register} trigger={trigger} errors={errors} next={next} back={back} />}
 
           {step === 3 && (
             <section className="space-y-6 animate-fade-up">
@@ -155,7 +93,7 @@ export default function RegisterCollegePage() {
                 <Button variant="ghost" onClick={back} className="gap-1.5">
                   <ArrowLeft className="size-4" /> Back
                 </Button>
-                <Button size="lg" onClick={next} className="gap-1.5 text-primary-foreground">
+                <Button size="lg" className="gap-1.5 text-primary-foreground">
                   Submit for review <ArrowRight className="size-4" />
                 </Button>
               </div>
