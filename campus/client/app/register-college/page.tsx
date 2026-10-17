@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { UploadCloud, ArrowLeft, ArrowRight, PartyPopper } from "lucide-react";
+import { PartyPopper } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { AuthRegistryPanel } from "@/components/shared/auth-registry-panel";
 import { StepIndicator } from "@/components/shared/step-indicator";
@@ -14,26 +12,16 @@ import { registerCollegeSchema, RegisterCollegeTypes } from "@/schemas/register-
 import { zodResolver } from "@hookform/resolvers/zod";
 import CollegeInfo from "./_components/CollegeInfo";
 import OwnerDetails from "./_components/OwnerDetails";
+import CollegeMedia from "./_components/CollegeMedia";
 
 const steps = [{ label: "College" }, { label: "Owner" }, { label: "Verification" }, { label: "Done" }];
-
-function UploadTile({ label, hint }: { label: string; hint: string }) {
-  return (
-    <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-input bg-muted/40 px-4 py-8 text-center transition-colors hover:bg-muted">
-      <UploadCloud className="size-5 text-muted-foreground" />
-      <span className="text-body-sm font-medium">{label}</span>
-      <span className="text-caption text-muted-foreground">{hint}</span>
-      <input type="file" className="hidden" />
-    </label>
-  );
-}
 
 export default function RegisterCollegePage() {
   const [step, setStep] = useState(1);
   const next = () => setStep((s) => Math.min(s + 1, 4));
   const back = () => setStep((s) => Math.max(s - 1, 1));
 
-  const { handleSubmit, register, formState, getValues, getErrors, trigger } = useForm<RegisterCollegeTypes>({
+  const { handleSubmit, register, formState, setValue, getValues, trigger } = useForm<RegisterCollegeTypes>({
     mode: "all",
     resolver: zodResolver(registerCollegeSchema),
     defaultValues: {
@@ -44,13 +32,42 @@ export default function RegisterCollegePage() {
       address: "123 Campus Drive",
       city: "Austin",
       state: "Texas",
-      ownerName: "",
-      ownerEmail: "",
-      password: "",
-      confirmPassword: "",
+      ownerName: "Kumar",
+      ownerEmail: "kumar@mit.edu",
+      password: "password",
+      confirmPassword: "password",
+      collegeLogo: undefined,
+      collegeIDProof: undefined,
     },
   });
   const errors = formState.errors;
+
+  const onSubmit = async (data: RegisterCollegeTypes) => {
+    const formData = new FormData();
+
+    formData.append("collegeName", data.collegeName);
+    formData.append("collegeEmail", data.collegeEmail);
+    formData.append("website", data.website);
+    formData.append("phone", data.phone);
+    formData.append("address", data.address);
+    formData.append("city", data.city);
+    formData.append("state", data.state);
+    formData.append("ownerName", data.ownerName);
+    formData.append("ownerEmail", data.ownerEmail);
+    formData.append("password", data.password);
+    formData.append("confirmPassword", data.confirmPassword);
+    formData.append("collegeLogo", data.collegeLogo);
+    formData.append("collegeIDProof", data.collegeIDProof);
+
+    // const response = await fetch("/api/register-college", {
+    //   method: "POST",
+    //   body: formData,
+    // });
+
+    // const json = await response.json();
+
+    // console.log(json);
+  };
 
   return (
     <div className="flex min-h-screen">
@@ -76,28 +93,14 @@ export default function RegisterCollegePage() {
           {step === 2 && <OwnerDetails register={register} trigger={trigger} errors={errors} next={next} back={back} />}
 
           {step === 3 && (
-            <section className="space-y-6 animate-fade-up">
-              <div className="space-y-1.5">
-                <h1 className="font-display text-display-lg">Verify your institution</h1>
-                <p className="text-body-md text-muted-foreground">
-                  We review every college before its workspace goes live \u2014 usually within one business day.
-                </p>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <UploadTile label="College logo" hint="PNG or SVG, up to 5MB" />
-                <UploadTile label="College ID proof" hint="Accreditation or registration doc" />
-              </div>
-
-              <div className="flex items-center justify-between pt-2">
-                <Button variant="ghost" onClick={back} className="gap-1.5">
-                  <ArrowLeft className="size-4" /> Back
-                </Button>
-                <Button size="lg" className="gap-1.5 text-primary-foreground">
-                  Submit for review <ArrowRight className="size-4" />
-                </Button>
-              </div>
-            </section>
+            <CollegeMedia
+              back={back}
+              setValue={setValue}
+              getValues={getValues}
+              trigger={trigger}
+              errors={errors}
+              next={handleSubmit(onSubmit)}
+            />
           )}
 
           {step === 4 && (
