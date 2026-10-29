@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Uuid, String, DateTime
+from sqlalchemy import Uuid, String, DateTime, UniqueConstraint
 
 from app.models.base import Base
 
@@ -12,6 +12,11 @@ if TYPE_CHECKING:
 
 class College(Base):
   __tablename__ = "colleges"
+
+  __table_args__ = (
+    UniqueConstraint("email", name="uq_colleges_email"),
+    UniqueConstraint("slug", name="uq_colleges_slug")
+  )
 
   id: Mapped[uuid.UUID] = mapped_column(
     Uuid(as_uuid=True), 
@@ -24,6 +29,13 @@ class College(Base):
   )
   slug: Mapped[str] = mapped_column(
     String(150),
+    index=True,
+    nullable=False
+  )
+
+  email: Mapped[str] = mapped_column(
+    String(100),
+    index=True,
     nullable=False
   )
 
@@ -32,8 +44,33 @@ class College(Base):
     nullable=True
   )
 
-  logo: Mapped[str] = mapped_column(
-    String,
+  phone: Mapped[str] = mapped_column(
+    String(15),
+    nullable=True
+  )
+
+  address: Mapped[str] = mapped_column(
+    String(200),
+    nullable=True
+  )
+
+  city: Mapped[str] = mapped_column(
+    String(30),
+    nullable=True
+  )
+
+  state: Mapped[str] = mapped_column(
+    String(30),
+    nullable=True
+  )
+
+  ownerName: Mapped[str] = mapped_column(
+    String(100),
+    nullable=True
+  )
+
+  ownerEmail: Mapped[str] = mapped_column(
+    String(100),
     nullable=True
   )
 

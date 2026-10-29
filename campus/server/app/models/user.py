@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Uuid, String, DateTime
+from sqlalchemy import Uuid, String, DateTime, ForeignKeyConstraint, UniqueConstraint
 
 from app.models.base import Base
 
@@ -12,6 +12,11 @@ if TYPE_CHECKING:
 
 class User(Base):
   __tablename__ = "users"
+
+  __table_args__ = (
+    UniqueConstraint("email", name="uq_users_email"),
+    ForeignKeyConstraint(["college_id"], ["colleges.id"], "fk_users_college_Id")
+  )
 
   id: Mapped[uuid.UUID] = mapped_column(
     Uuid(as_uuid=True), 
@@ -24,7 +29,6 @@ class User(Base):
   )
   email: Mapped[str] = mapped_column(
     String(100),
-    unique=True,
     index=True,
     nullable=False
   )

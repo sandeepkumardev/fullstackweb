@@ -15,7 +15,8 @@ class RegisterCollege(BaseModel):
 
   @field_validator(
       "collegeName",
-      "collegeEmail"
+      "collegeEmail",
+      mode="before"
   )
   @classmethod
   def remove_whitespace(cls, value):
@@ -25,7 +26,8 @@ class RegisterCollege(BaseModel):
     return value
 
   @field_validator(
-    "phone"
+    "phone",
+    mode="before"
   )
   @classmethod
   def validate_phone(cls, value):
@@ -35,7 +37,8 @@ class RegisterCollege(BaseModel):
 
   @field_validator(
     "password",
-    "confirmPassword"
+    "confirmPassword",
+    mode="before"
   )
   @classmethod
   def validate_password(cls, value):

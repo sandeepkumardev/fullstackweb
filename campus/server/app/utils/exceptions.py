@@ -14,8 +14,6 @@ def request_validation_handler(request: Request, exc: Exception):
 
     title_field = to_title_case(field)
 
-    print(err)
-
     if error_type == "missing":
       message = f"{title_field} is required!"
     elif error_type == "string_too_short":
@@ -34,3 +32,12 @@ def request_validation_handler(request: Request, exc: Exception):
     "message": "Validation error",
     "errors": errors
   })
+
+def http_exception_handler(req: Request, exc: Exception):
+  return JSONResponse(
+    status_code=exc.status_code,
+    content={
+      "success": False,
+      "message": exc.detail,
+    }
+  )

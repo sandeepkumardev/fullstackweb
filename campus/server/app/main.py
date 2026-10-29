@@ -1,15 +1,20 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 
 from app.routes.base import router
-from app.utils.exceptions import request_validation_handler
+from app.utils.exceptions import request_validation_handler, http_exception_handler
 
 app = FastAPI()
 
 app.add_exception_handler(
   RequestValidationError,
   request_validation_handler
+)
+
+app.add_exception_handler(
+  HTTPException,
+  http_exception_handler
 )
 
 @app.get("/")
