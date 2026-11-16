@@ -1,15 +1,12 @@
 from fastapi import Form, HTTPException
-from fastapi.exceptions import RequestValidationError
-from pydantic import ValidationError
 from slugify import slugify
 from pwdlib import PasswordHash
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from app.schemas.auth import RegisterCollege
 from app.dependencies.get_db import DbSession
 from app.models.college import College
 from app.models.user import User
-from app.utils.constraints import UNIQUE_CONSTRAINTS
+from app.handlers.exception import handle_exception
 
 password_hash = PasswordHash.recommended()
 
@@ -79,29 +76,5 @@ def register_college(
 
     return { "message": "College register successfully!"}
 
-  except ValidationError as exc:
-    raise RequestValidationError(errors=exc.errors())
-
-  except IntegrityError as exc:
-    diagnostic = getattr(exc.orig, "diag", None)
-    constraint_name = getattr(diagnostic, "constraint_name", None)
-
-    message = UNIQUE_CONSTRAINTS.get(constraint_name, "Database Error!")
-
-    raise HTTPException(
-      status_code=409,
-      detail=message
-    )
-
-  except SQLAlchemyError as exc:
-    raise HTTPException(
-      status_code=500,
-      detail="Database operation failed!"
-    )
-
   except Exception as exc:
-    print(exc)
-    raise HTTPException(
-      status_code=500,
-      detail="Something went wrong!"
-    )
+    handle_exception(exc, db)
