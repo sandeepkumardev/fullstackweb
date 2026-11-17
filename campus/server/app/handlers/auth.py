@@ -1,16 +1,16 @@
-from fastapi import Form, HTTPException
+from fastapi import Form, HTTPException, Request
 from slugify import slugify
 from pwdlib import PasswordHash
 
-from app.schemas.auth import RegisterCollege
+from app.schemas.auth import RegisterCollegeSchema, SignInSchema
 from app.dependencies.get_db import DbSession
 from app.models.college import College
 from app.models.user import User
-from app.handlers.exception import handle_exception
+from app.utils.exceptions import handle_exception
 
 password_hash = PasswordHash.recommended()
 
-def register_college(
+def register_college_handler(
     db: DbSession,
     collegeName: str = Form(),
     collegeEmail: str = Form(),
@@ -25,7 +25,7 @@ def register_college(
     confirmPassword: str = Form(),
 ):
   try:
-    RegisterCollege.model_validate({
+    RegisterCollegeSchema.model_validate({
       "collegeName": collegeName,
       "collegeEmail": collegeEmail,
       "website": website,
@@ -77,4 +77,15 @@ def register_college(
     return { "message": "College register successfully!"}
 
   except Exception as exc:
-    handle_exception(exc, db)
+    db.rollback()
+    handle_exception(exc)
+
+async def signin_handler(db: DbSession, body: SignInSchema):
+  try:
+    # find email in db
+    # if user found-> match password
+    # if match -> reutrn success
+
+    return {"message": "Signin successfully!"}
+  except Exception as exc:
+    handle_exception(exc)

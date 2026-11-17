@@ -1,9 +1,14 @@
 import uvicorn
+import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
 
 from app.routes.base import router
-from app.utils.exceptions import request_validation_handler, http_exception_handler
+from app.utils.exceptions import request_validation_handler, http_exception_handler, unexpected_exception_handeler
+
+logging.basicConfig(
+  filename="exceptions.log"
+)
 
 app = FastAPI()
 
@@ -15,6 +20,11 @@ app.add_exception_handler(
 app.add_exception_handler(
   HTTPException,
   http_exception_handler
+)
+
+app.add_exception_handler(
+  Exception,
+  unexpected_exception_handeler
 )
 
 @app.get("/")

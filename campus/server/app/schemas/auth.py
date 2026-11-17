@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, EmailStr, field_validator, HttpUrl
 
-class RegisterCollege(BaseModel):
+class RegisterCollegeSchema(BaseModel):
   collegeName: str = Field(min_length=3, max_length=150)
   collegeEmail: EmailStr
   website: HttpUrl
@@ -47,3 +47,7 @@ class RegisterCollege(BaseModel):
     if not any(char.isupper() for char in value):
       raise ValueError("Password should contain a uppercase")
     return value
+
+class SignInSchema(BaseModel):
+  email: EmailStr
+  password: str = Field(min_length=8)
