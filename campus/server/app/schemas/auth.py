@@ -16,6 +16,13 @@ class RegisterCollegeSchema(BaseModel):
   @field_validator(
       "collegeName",
       "collegeEmail",
+      "website",
+      "phone",
+      "address",
+      "city",
+      "state",
+      "ownerName",
+      "ownerEmail",
       mode="before"
   )
   @classmethod
@@ -51,3 +58,15 @@ class RegisterCollegeSchema(BaseModel):
 class SignInSchema(BaseModel):
   email: EmailStr
   password: str = Field(min_length=8)
+
+  @field_validator(
+      "email",
+      "password",
+      mode="before"
+  )
+  @classmethod
+  def remove_whitespace(cls, value):
+    value = value.strip()
+    if not value:
+      raise ValueError("This field is required!")
+    return value

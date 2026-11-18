@@ -1,6 +1,9 @@
 from fastapi import Form, HTTPException, Request
+from fastapi.responses import JSONResponse
 from slugify import slugify
 from pwdlib import PasswordHash
+from sqlalchemy import select
+from typing import Annotated
 
 from app.schemas.auth import RegisterCollegeSchema, SignInSchema
 from app.dependencies.get_db import DbSession
@@ -12,61 +15,37 @@ password_hash = PasswordHash.recommended()
 
 def register_college_handler(
     db: DbSession,
-    collegeName: str = Form(),
-    collegeEmail: str = Form(),
-    website: str = Form(),
-    phone: str = Form(),
-    address: str = Form(),
-    city: str = Form(),
-    state: str = Form(),
-    ownerName: str = Form(),
-    ownerEmail: str = Form(),
-    password: str = Form(),
-    confirmPassword: str = Form(),
+    form: Annotated[RegisterCollegeSchema, Form()]
 ):
   try:
-    RegisterCollegeSchema.model_validate({
-      "collegeName": collegeName,
-      "collegeEmail": collegeEmail,
-      "website": website,
-      "phone": phone,
-      "address": address,
-      "city": city,
-      "state": state,
-      "ownerName": ownerName,
-      "ownerEmail": ownerEmail,
-      "password": password,
-      "confirmPassword": confirmPassword
-    })
-
-    if password != confirmPassword:
+    if form.password != form.confirmPassword:
       raise HTTPException(
         status_code=400,
         detail="Password do not match!"
       )
 
-    slug = slugify(collegeName)
-    passwordHash = password_hash.hash(password)
+    slug = slugify(form.collegeName)
+    passwordHash = password_hash.hash(form.password)
 
     college = College(
-      name=collegeName,
+      name=form.collegeName,
       slug=slug,
-      email=collegeEmail,
-      website=website,
-      phone=phone,
-      address=address,
-      city=city,
-      state=state,
-      ownerName=ownerName,
-      ownerEmail=ownerEmail
+      email=form.collegeEmail,
+      website=str(form.website),
+      phone=form.phone,
+      address=form.address,
+      city=form.city,
+      state=form.state,
+      ownerName=form.ownerName,
+      ownerEmail=form.ownerEmail
     )
 
     db.add(college)
     db.flush()
 
     user = User(
-      name=ownerName,
-      email=ownerEmail,
+      name=form.ownerName,
+      email=form.ownerEmail,
       password_hash=passwordHash,
       college_id=college.id
     )
@@ -82,10 +61,30 @@ def register_college_handler(
 
 async def signin_handler(db: DbSession, body: SignInSchema):
   try:
-    # find email in db
-    # if user found-> match password
-    # if match -> reutrn success
+    user = db.scalar(select(User).where(User.email == body.email))
 
-    return {"message": "Signin successfully!"}
+    if not user:
+      raise HTTPException(
+        status_code=401,
+        detail="Invalid email!"
+      )
+
+    if not password_hash.verify(body.password, user.password_hash):
+      raise HTTPException(
+        status_code=401,
+        detail="Invalid password!"
+      )
+
+    # generate access token
+    # data - user.id
+    # exp
+
+    return JSONResponse({
+      "success": True,
+      "message": "Singged in successfully",
+      "data": {
+        "access_token": "..."
+      }
+    })
   except Exception as exc:
     handle_exception(exc)

@@ -86,6 +86,11 @@ def handle_exception(exc: Exception):
     )
 
   if isinstance(exc, SQLAlchemyError):
+    logger.exception(
+      f"SQL Alchemy Error -",
+      exc_info=exc
+    )
+    
     raise HTTPException(
       status_code=500,
       detail="Database operation failed!"
