@@ -1,4 +1,4 @@
-from fastapi import Form, HTTPException, Request
+from fastapi import Form, HTTPException, Request, Depends
 from fastapi.responses import JSONResponse
 from slugify import slugify
 from pwdlib import PasswordHash
@@ -10,6 +10,8 @@ from app.dependencies.get_db import DbSession
 from app.models.college import College
 from app.models.user import User
 from app.utils.exceptions import handle_exception
+from app.utils.jwt import generate_token
+from app.dependencies.user import get_current_user
 
 password_hash = PasswordHash.recommended()
 
@@ -59,7 +61,7 @@ def register_college_handler(
     db.rollback()
     handle_exception(exc)
 
-async def signin_handler(db: DbSession, body: SignInSchema):
+def signin_handler(db: DbSession, body: SignInSchema):
   try:
     user = db.scalar(select(User).where(User.email == body.email))
 
@@ -75,16 +77,25 @@ async def signin_handler(db: DbSession, body: SignInSchema):
         detail="Invalid password!"
       )
 
-    # generate access token
-    # data - user.id
-    # exp
+    access_token = generate_token({
+      "sub": str(user.id),
+      "college_id": str(user.college_id)
+    })
 
     return JSONResponse({
       "success": True,
       "message": "Singged in successfully",
       "data": {
-        "access_token": "..."
+        "access_token": access_token,
+        "token_type": "bearer"
       }
     })
   except Exception as exc:
     handle_exception(exc)
+
+def me(user: User = Depends(get_current_user)):
+  return {
+    "id": user.id,
+    "name": user.name,
+    "email": user.email
+  }

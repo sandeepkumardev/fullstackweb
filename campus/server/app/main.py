@@ -2,6 +2,7 @@ import uvicorn
 import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes.base import router
 from app.utils.exceptions import request_validation_handler, http_exception_handler, unexpected_exception_handeler
@@ -11,6 +12,12 @@ logging.basicConfig(
 )
 
 app = FastAPI()
+
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins=["http://localhost:3000"],
+  allow_methods=["*"]
+)
 
 app.add_exception_handler(
   RequestValidationError,
