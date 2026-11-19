@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,8 +9,48 @@ import { Separator } from "@/components/ui/separator";
 import { AuthRegistryPanel } from "@/components/shared/auth-registry-panel";
 
 import { FcGoogle } from "react-icons/fc";
+import { useForm } from "react-hook-form";
+import { signInSchema, ISignInData } from "@/schemas/signin";
+import { zodResolver } from "@hookform/resolvers/zod";
+import InputField from "./_components/InputField";
 
 export default function SignInPage() {
+  const { handleSubmit, register, formState } = useForm<ISignInData>({
+    mode: "all",
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+  const errors = formState.errors;
+
+  const onSubmit = async (data: ISignInData) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/v1/auth/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      const jsonData = await response.json();
+
+      if (!jsonData.success) {
+        console.log(jsonData.message);
+      }
+
+      if (!jsonData.data.access_token) {
+        console.log(jsonData.message);
+      }
+
+      const token = jsonData.data.access_token;
+      localStorage.setItem("token", token);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="flex min-h-screen">
       <AuthRegistryPanel />
@@ -37,10 +79,17 @@ export default function SignInPage() {
             <Separator className="flex-1" />
           </div>
 
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-1.5">
               <Label htmlFor="email">College email</Label>
-              <Input id="email" type="email" placeholder="you@college.edu" autoComplete="email" />
+              <InputField
+                id="email"
+                type="email"
+                placeholder="you@college.edu"
+                name="email"
+                register={register}
+                errors={errors}
+              />
             </div>
 
             <div className="space-y-1.5">
@@ -50,7 +99,14 @@ export default function SignInPage() {
                   Forgot password?
                 </Link>
               </div>
-              <Input id="password" type="password" placeholder="**********" autoComplete="current-password" />
+              <InputField
+                id="password"
+                type="password"
+                placeholder="*********"
+                name="password"
+                register={register}
+                errors={errors}
+              />
             </div>
 
             <div className="flex items-center gap-2">
