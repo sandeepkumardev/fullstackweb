@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
@@ -13,8 +12,12 @@ import { useForm } from "react-hook-form";
 import { signInSchema, ISignInData } from "@/schemas/signin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "./_components/InputField";
+import { toast } from "@/components/ui/toast";
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
+  const router = useRouter();
+
   const { handleSubmit, register, formState } = useForm<ISignInData>({
     mode: "all",
     resolver: zodResolver(signInSchema),
@@ -36,18 +39,28 @@ export default function SignInPage() {
       });
       const jsonData = await response.json();
 
-      if (!jsonData.success) {
-        console.log(jsonData.message);
-      }
-
-      if (!jsonData.data.access_token) {
-        console.log(jsonData.message);
+      if (!jsonData.success || !jsonData.data.access_token) {
+        toast.add({
+          type: "error",
+          description: jsonData.message || "Something went wrong!",
+        });
+        return;
       }
 
       const token = jsonData.data.access_token;
       localStorage.setItem("token", token);
+
+      toast.add({
+        type: "success",
+        description: jsonData.message,
+      });
+      router.push("/");
     } catch (error) {
       console.log(error);
+      toast.add({
+        type: "error",
+        description: "Something went wrong!",
+      });
     }
   };
 

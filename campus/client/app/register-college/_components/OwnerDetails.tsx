@@ -2,16 +2,20 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RegisterCollegeTypes } from "@/schemas/register-college";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { FieldErrors, UseFormRegister, UseFormTrigger } from "react-hook-form";
+import { FieldErrors, UseFormGetValues, UseFormRegister, UseFormSetError, UseFormTrigger } from "react-hook-form";
 import InputField from "./InputField";
 
 const OwnerDetails = ({
+  setError,
+  getValues,
   register,
   trigger,
   errors,
   next,
   back,
 }: {
+  setError: UseFormSetError<RegisterCollegeTypes>;
+  getValues: UseFormGetValues<RegisterCollegeTypes>;
   register: UseFormRegister<RegisterCollegeTypes>;
   trigger: UseFormTrigger<RegisterCollegeTypes>;
   errors: FieldErrors<RegisterCollegeTypes>;
@@ -21,6 +25,18 @@ const OwnerDetails = ({
   const isValid = async () => {
     const isValid = await trigger(["ownerName", "ownerEmail", "password", "confirmPassword"]);
     if (!isValid) return;
+
+    const password = getValues("password");
+    const confirm_password = getValues("confirmPassword");
+
+    if (password !== confirm_password) {
+      setError("confirmPassword", {
+        type: "manual",
+        message: "Password do not match",
+      });
+      return;
+    }
+
     next();
   };
   return (
@@ -41,11 +57,11 @@ const OwnerDetails = ({
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="password">Password</Label>
-          <InputField id="password" name="password" register={register} errors={errors} />
+          <InputField type="password" id="password" name="password" register={register} errors={errors} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="confirm-password">Confirm password</Label>
-          <InputField id="confirm-password" name="confirmPassword" register={register} errors={errors} />
+          <InputField type="password" id="confirm-password" name="confirmPassword" register={register} errors={errors} />
         </div>
       </div>
 

@@ -40,7 +40,13 @@ export const registerCollegeSchema = z
       .min(1, { message: "Owner name is required" })
       .min(3, { message: "Owner name is too short" }),
     ownerEmail: z.string().trim().email({ message: "Invalid email" }),
-    password: z.string().trim().min(1, { message: "Password is required" }).min(8, { message: "Password is too short" }),
+    password: z
+      .string()
+      .trim()
+      .min(1, { message: "Password is required" })
+      .min(8, { message: "Password is too short" })
+      .regex(/[A-Z]/, "Password should contain a uppercase")
+      .regex(/[0-9]/, "Password should contain a number"),
     confirmPassword: z.string().trim().min(1, { message: "Password is required" }),
 
     collegeLogo: logoSchema,

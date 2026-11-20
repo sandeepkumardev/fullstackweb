@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CollegeInfo from "./_components/CollegeInfo";
 import OwnerDetails from "./_components/OwnerDetails";
 import CollegeMedia from "./_components/CollegeMedia";
+import { toast } from "@/components/ui/toast";
 
 const steps = [{ label: "College" }, { label: "Owner" }, { label: "Verification" }, { label: "Done" }];
 
@@ -21,14 +22,14 @@ export default function RegisterCollegePage() {
   const next = () => setStep((s) => Math.min(s + 1, 4));
   const back = () => setStep((s) => Math.max(s - 1, 1));
 
-  const { handleSubmit, register, formState, setValue, getValues, trigger } = useForm<RegisterCollegeTypes>({
+  const { handleSubmit, register, formState, setValue, setError, getValues, trigger } = useForm<RegisterCollegeTypes>({
     mode: "all",
     resolver: zodResolver(registerCollegeSchema),
     defaultValues: {
       collegeName: "MIT",
       collegeEmail: "admin@mit.edu",
       website: "https://mit.edu",
-      phone: "123-456-7890",
+      phone: "1234567890",
       address: "123 Campus Drive",
       city: "Austin",
       state: "Texas",
@@ -59,14 +60,41 @@ export default function RegisterCollegePage() {
     formData.append("collegeLogo", data.collegeLogo);
     formData.append("collegeIDProof", data.collegeIDProof);
 
-    // const response = await fetch("/api/register-college", {
-    //   method: "POST",
-    //   body: formData,
-    // });
+    try {
+      const response = await fetch("http://localhost:5000/api/v1/auth/register-college", {
+        method: "POST",
+        body: formData,
+      });
 
-    // const json = await response.json();
+      const json = await response.json();
 
-    // console.log(json);
+      if (!json.success) {
+        if (json.errors && Object.entries(json.errors)[0]) {
+          const [field, message] = Object.entries(json.errors)[0];
+
+          toast.add({
+            type: "error",
+            title: field,
+            description: (message as string) || "Someting went wrong!",
+          });
+          return;
+        }
+
+        toast.add({
+          type: "error",
+          description: json.message || "Someting went wrong!",
+        });
+        return;
+      }
+
+      console.log(json);
+    } catch (error) {
+      console.log(error);
+      toast.add({
+        type: "error",
+        description: "Someting went wrong!",
+      });
+    }
   };
 
   return (
@@ -90,7 +118,17 @@ export default function RegisterCollegePage() {
 
           {step === 1 && <CollegeInfo register={register} trigger={trigger} errors={errors} next={next} />}
 
-          {step === 2 && <OwnerDetails register={register} trigger={trigger} errors={errors} next={next} back={back} />}
+          {step === 2 && (
+            <OwnerDetails
+              setError={setError}
+              getValues={getValues}
+              register={register}
+              trigger={trigger}
+              errors={errors}
+              next={next}
+              back={back}
+            />
+          )}
 
           {step === 3 && (
             <CollegeMedia

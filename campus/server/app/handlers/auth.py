@@ -1,4 +1,4 @@
-from fastapi import Form, HTTPException, Request, Depends
+from fastapi import Form, HTTPException, UploadFile, Depends
 from fastapi.responses import JSONResponse
 from slugify import slugify
 from pwdlib import PasswordHash
@@ -12,14 +12,27 @@ from app.models.user import User
 from app.utils.exceptions import handle_exception
 from app.utils.jwt import generate_token
 from app.dependencies.user import get_current_user
+from app.utils.file import validate_file
 
 password_hash = PasswordHash.recommended()
 
-def register_college_handler(
+async def register_college_handler(
     db: DbSession,
-    form: Annotated[RegisterCollegeSchema, Form()]
+    form: Annotated[RegisterCollegeSchema, Form()],
+    collegeLogo: UploadFile,
+    collegeIDProof: UploadFile
 ):
   try:
+
+    # validate file
+    logo = await validate_file(collegeLogo, "College Logo")
+    idProof = await validate_file(collegeIDProof, "College ID Proof")
+
+    # upload file
+    
+
+    # save in db
+
     if form.password != form.confirmPassword:
       raise HTTPException(
         status_code=400,
@@ -55,7 +68,7 @@ def register_college_handler(
     db.add(user)
     db.commit()
 
-    return { "message": "College register successfully!"}
+    return { "success": True, "message": "College register successfully!"}
 
   except Exception as exc:
     db.rollback()

@@ -17,7 +17,6 @@ class RegisterCollegeSchema(BaseModel):
       "collegeName",
       "collegeEmail",
       "website",
-      "phone",
       "address",
       "city",
       "state",
@@ -40,7 +39,7 @@ class RegisterCollegeSchema(BaseModel):
   def validate_phone(cls, value):
     if not value.isdigit():
       raise ValueError("Phone number must be a number!")
-    return value
+    return str(value)
 
   @field_validator(
     "password",
