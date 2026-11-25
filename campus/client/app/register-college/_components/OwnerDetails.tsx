@@ -49,19 +49,40 @@ const OwnerDetails = ({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5 sm:col-span-2">
           <Label htmlFor="full-name">Full name</Label>
-          <InputField id="full-name" name="ownerName" register={register} errors={errors} />
+          <InputField id="full-name" name="ownerName" placeholder="Enter owner name" register={register} errors={errors} />
         </div>
         <div className="space-y-1.5 sm:col-span-2">
           <Label htmlFor="owner-email">Email</Label>
-          <InputField id="owner-email" name="ownerEmail" register={register} errors={errors} />
+          <InputField
+            id="owner-email"
+            placeholder="Enter owner email"
+            name="ownerEmail"
+            register={register}
+            errors={errors}
+          />
+          <p className="text-xs text-gray-500">This email will be used for singin.</p>
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="password">Password</Label>
-          <InputField type="password" id="password" name="password" register={register} errors={errors} />
+          <InputField
+            type="password"
+            id="password"
+            placeholder="Enter password"
+            name="password"
+            register={register}
+            errors={errors}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="confirm-password">Confirm password</Label>
-          <InputField type="password" id="confirm-password" name="confirmPassword" register={register} errors={errors} />
+          <InputField
+            type="password"
+            placeholder="Enter password"
+            id="confirm-password"
+            name="confirmPassword"
+            register={register}
+            errors={errors}
+          />
         </div>
       </div>
 

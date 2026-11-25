@@ -27,12 +27,8 @@ const InputField = ({
       {errors[name] && <p className="text-red-500 text-sm">{errors[name].message}</p>}
 
       {type === "password" && (
-        <div className="absolute top-2.5 right-2">
-          {open ? (
-            <Eye className="w-4 h-4" onClick={() => setOpen(false)} />
-          ) : (
-            <EyeClosed className="w-4 h-4" onClick={() => setOpen(true)} />
-          )}
+        <div className="absolute top-1.5 right-2">
+          {open ? <Eye onClick={() => setOpen(false)} /> : <EyeClosed onClick={() => setOpen(true)} />}
         </div>
       )}
     </div>

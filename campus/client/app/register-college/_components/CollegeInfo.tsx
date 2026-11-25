@@ -35,31 +35,43 @@ const CollegeInfo = ({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5 sm:col-span-2">
           <Label htmlFor="college-name">College name</Label>
-          <InputField id="college-name" register={register} name="collegeName" errors={errors} />
+          <InputField
+            id="college-name"
+            placeholder="Enter college name"
+            register={register}
+            name="collegeName"
+            errors={errors}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="college-email">College email</Label>
-          <InputField id="college-email" register={register} name="collegeEmail" errors={errors} />
+          <InputField
+            id="college-email"
+            placeholder="Enter college email"
+            register={register}
+            name="collegeEmail"
+            errors={errors}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="website">Website</Label>
-          <InputField id="website" register={register} name="website" errors={errors} />
+          <InputField id="website" placeholder="Enter college website" register={register} name="website" errors={errors} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="phone">Phone</Label>
-          <InputField id="phone" register={register} name="phone" errors={errors} />
+          <InputField id="phone" placeholder="Enter college phone number" register={register} name="phone" errors={errors} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="address">Address</Label>
-          <InputField id="address" register={register} name="address" errors={errors} />
+          <InputField id="address" placeholder="Enter college address" register={register} name="address" errors={errors} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="city">City</Label>
-          <InputField id="city" register={register} name="city" errors={errors} />
+          <InputField id="city" register={register} placeholder="Enter city name" name="city" errors={errors} />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="state">State</Label>
-          <InputField id="state" register={register} name="state" errors={errors} />
+          <InputField id="state" register={register} placeholder="Enter state name" name="state" errors={errors} />
         </div>
       </div>
 

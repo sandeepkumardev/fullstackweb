@@ -94,11 +94,11 @@ export default function SignInPage() {
 
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-1.5">
-              <Label htmlFor="email">College email</Label>
+              <Label htmlFor="email">Email</Label>
               <InputField
                 id="email"
                 type="email"
-                placeholder="you@college.edu"
+                placeholder="you@gmail.edu"
                 name="email"
                 register={register}
                 errors={errors}
