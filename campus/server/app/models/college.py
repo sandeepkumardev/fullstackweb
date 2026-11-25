@@ -3,12 +3,13 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Uuid, String, DateTime, UniqueConstraint
+from sqlalchemy import Uuid, String, DateTime, UniqueConstraint, ForeignKey
 
 from app.models.base import Base
 
 if TYPE_CHECKING:
   from app.models.user import User
+  from app.models.file import File
 
 class College(Base):
   __tablename__ = "colleges"
@@ -73,6 +74,12 @@ class College(Base):
     String(100),
     nullable=True
   )
+
+  logo_file_id: Mapped[str] = mapped_column(ForeignKey("files.id"), nullable=False)
+  id_proof_file_id: Mapped[str] = mapped_column(ForeignKey("files.id"), nullable=False)
+
+  logo_file: Mapped["File"] = relationship("File", foreign_keys=[logo_file_id])
+  id_proof_file: Mapped["File"] = relationship("File", foreign_keys=[id_proof_file_id])
 
   created_at: Mapped[datetime] = mapped_column(
     DateTime(timezone=True),

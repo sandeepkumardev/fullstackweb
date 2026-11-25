@@ -9,10 +9,11 @@ from app.schemas.auth import RegisterCollegeSchema, SignInSchema
 from app.dependencies.get_db import DbSession
 from app.models.college import College
 from app.models.user import User
+from app.models.file import File
 from app.utils.exceptions import handle_exception
 from app.utils.jwt import generate_token
 from app.dependencies.user import get_current_user
-from app.utils.file import validate_file
+from app.utils.file import validate_file, upload_file, delete_file
 
 password_hash = PasswordHash.recommended()
 
@@ -23,16 +24,6 @@ async def register_college_handler(
     collegeIDProof: UploadFile
 ):
   try:
-
-    # validate file
-    logo = await validate_file(collegeLogo, "College Logo")
-    idProof = await validate_file(collegeIDProof, "College ID Proof")
-
-    # upload file
-    
-
-    # save in db
-
     if form.password != form.confirmPassword:
       raise HTTPException(
         status_code=400,
@@ -40,7 +31,30 @@ async def register_college_handler(
       )
 
     slug = slugify(form.collegeName)
-    passwordHash = password_hash.hash(form.password)
+  
+    # validate file
+    logo = await validate_file(collegeLogo, "College Logo")
+    idProof = await validate_file(collegeIDProof, "College ID Proof")
+
+    # upload file
+    logoRes = await upload_file(logo["content"], f"campus/college_docs/{slug}")
+    idProofRes = await upload_file(idProof["content"], f"campus/college_docs/{slug}")
+
+    # save in db
+    logoFile = File(
+      public_id=logoRes["public_id"],
+      resource_type=logoRes["resource_type"],
+      url=logoRes["secure_url"]
+    )
+
+    idProofFile = File(
+      public_id=idProofRes["public_id"],
+      resource_type=idProofRes["resource_type"],
+      url=idProofRes["secure_url"]
+    )
+
+    db.add_all([logoFile, idProofFile])
+    db.flush()
 
     college = College(
       name=form.collegeName,
@@ -52,11 +66,15 @@ async def register_college_handler(
       city=form.city,
       state=form.state,
       ownerName=form.ownerName,
-      ownerEmail=form.ownerEmail
+      ownerEmail=form.ownerEmail,
+      logo_file_id=logoFile.id,
+      id_proof_file_id=idProofFile.id
     )
 
     db.add(college)
     db.flush()
+
+    passwordHash = password_hash.hash(form.password)
 
     user = User(
       name=form.ownerName,
@@ -71,6 +89,9 @@ async def register_college_handler(
     return { "success": True, "message": "College register successfully!"}
 
   except Exception as exc:
+    await delete_file(logoRes["public_id"], logoRes["resource_type"])
+    await delete_file(idProofRes["public_id"], idProofRes["resource_type"])
+    
     db.rollback()
     handle_exception(exc)
 
