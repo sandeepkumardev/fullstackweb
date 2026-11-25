@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { RegisterCollegeTypes } from "@/schemas/register-college";
-import { ArrowLeft, ArrowRight, File, UploadCloud, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, File, LoaderCircle, UploadCloud, X } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import { FieldErrors, UseFormGetValues, UseFormSetValue, UseFormTrigger } from "react-hook-form";
@@ -12,6 +12,7 @@ const CollegeMedia = ({
   errors,
   next,
   back,
+  loading,
 }: {
   setValue: UseFormSetValue<RegisterCollegeTypes>;
   getValues: UseFormGetValues<RegisterCollegeTypes>;
@@ -19,6 +20,7 @@ const CollegeMedia = ({
   errors: FieldErrors<RegisterCollegeTypes>;
   next: () => void;
   back: () => void;
+  loading: boolean;
 }) => {
   const isValid = async () => {
     const isValid = await trigger(["collegeLogo", "collegeIDProof"]);
@@ -57,8 +59,8 @@ const CollegeMedia = ({
         <Button variant="ghost" onClick={back} className="gap-1.5">
           <ArrowLeft className="size-4" /> Back
         </Button>
-        <Button size="lg" className="gap-1.5 text-primary-foreground" onClick={isValid}>
-          Submit for review <ArrowRight className="size-4" />
+        <Button disabled={loading} size="lg" className="gap-1.5 text-primary-foreground" onClick={isValid}>
+          Submit for review {loading ? <LoaderCircle className="animate-spin" /> : <ArrowRight className="size-4" />}
         </Button>
       </div>
     </section>

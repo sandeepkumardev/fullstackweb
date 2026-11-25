@@ -14,10 +14,12 @@ import CollegeInfo from "./_components/CollegeInfo";
 import OwnerDetails from "./_components/OwnerDetails";
 import CollegeMedia from "./_components/CollegeMedia";
 import { toast } from "@/components/ui/toast";
+import { useRouter } from "next/navigation";
 
 const steps = [{ label: "College" }, { label: "Owner" }, { label: "Verification" }, { label: "Done" }];
 
 export default function RegisterCollegePage() {
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const next = () => setStep((s) => Math.min(s + 1, 4));
   const back = () => setStep((s) => Math.max(s - 1, 1));
@@ -26,22 +28,23 @@ export default function RegisterCollegePage() {
     mode: "all",
     resolver: zodResolver(registerCollegeSchema),
     defaultValues: {
-      collegeName: "MIT",
-      collegeEmail: "admin@mit.edu",
-      website: "https://mit.edu",
-      phone: "1234567890",
-      address: "123 Campus Drive",
-      city: "Austin",
-      state: "Texas",
-      ownerName: "Kumar",
-      ownerEmail: "kumar@mit.edu",
-      password: "password",
-      confirmPassword: "password",
+      collegeName: "",
+      collegeEmail: "",
+      website: "",
+      phone: "",
+      address: "",
+      city: "",
+      state: "",
+      ownerName: "",
+      ownerEmail: "",
+      password: "",
+      confirmPassword: "",
       collegeLogo: undefined,
       collegeIDProof: undefined,
     },
   });
   const errors = formState.errors;
+  const loading = formState.isSubmitting;
 
   const onSubmit = async (data: RegisterCollegeTypes) => {
     const formData = new FormData();
@@ -87,7 +90,12 @@ export default function RegisterCollegePage() {
         return;
       }
 
-      console.log(json);
+      toast.add({
+        type: "success",
+        title: json.message || "College register successfully!",
+        description: "Use your email & password for singin",
+      });
+      router.push("/signin");
     } catch (error) {
       console.log(error);
       toast.add({
@@ -138,6 +146,7 @@ export default function RegisterCollegePage() {
               trigger={trigger}
               errors={errors}
               next={handleSubmit(onSubmit)}
+              loading={loading}
             />
           )}
 
