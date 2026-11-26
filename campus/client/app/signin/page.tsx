@@ -13,10 +13,11 @@ import { signInSchema, ISignInData } from "@/schemas/signin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "./_components/InputField";
 import { toast } from "@/components/ui/toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SignInPage() {
   const router = useRouter();
+  const params = useSearchParams();
 
   const { handleSubmit, register, formState } = useForm<ISignInData>({
     mode: "all",
@@ -30,7 +31,7 @@ export default function SignInPage() {
 
   const onSubmit = async (data: ISignInData) => {
     try {
-      const response = await fetch("http://localhost:5000/api/v1/auth/sign-in", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/sign-in`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +55,7 @@ export default function SignInPage() {
         type: "success",
         description: jsonData.message,
       });
-      router.push("/");
+      router.replace(params.get("next") || "/dashboard");
     } catch (error) {
       console.log(error);
       toast.add({

@@ -6,6 +6,7 @@ export default function Home() {
       <Link href="/register-college">Register College</Link>
       <Link href="/signin">Signin</Link>
       <Link href="/design-system">Design System</Link>
+      public page
     </div>
   );
 }
