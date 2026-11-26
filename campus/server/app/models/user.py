@@ -3,7 +3,8 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Uuid, String, DateTime, ForeignKeyConstraint, UniqueConstraint
+from sqlalchemy import Uuid, String, DateTime, ForeignKeyConstraint, UniqueConstraint, Boolean
+import sqlalchemy as sa
 
 from app.models.base import Base
 
@@ -36,6 +37,9 @@ class User(Base):
     String,
     nullable=False
   )
+
+  avatar: Mapped[str] = mapped_column(String, nullable=True)
+  is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default=sa.true())
 
   created_at: Mapped[datetime] = mapped_column(
     DateTime(timezone=True),

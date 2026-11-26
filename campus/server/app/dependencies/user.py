@@ -1,6 +1,7 @@
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
+from sqlalchemy.orm import defer
 
 from app.dependencies.get_db import DbSession
 from app.utils.jwt import verify_token
@@ -21,7 +22,10 @@ def get_current_user(db: DbSession, credentials: HTTPAuthorizationCredentials = 
       detail="Invalid token!"
     )
 
-  user = db.scalar(select(User).where(User.id == user_id, User.college_id == college_id))
+  user = db.scalar(select(User)
+                   .options(defer(User.password_hash))
+                   .where(User.id == user_id, User.college_id == college_id)
+                  )
   if not user:
     raise HTTPException(
       status_code=401,

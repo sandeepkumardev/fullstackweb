@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from slugify import slugify
 from pwdlib import PasswordHash
 from sqlalchemy import select
+from sqlalchemy.orm import load_only, joinedload
 from typing import Annotated
 
 from app.schemas.auth import RegisterCollegeSchema, SignInSchema
@@ -10,6 +11,7 @@ from app.dependencies.get_db import DbSession
 from app.models.college import College
 from app.models.user import User
 from app.models.file import File
+from app.models.enums import UserRole
 from app.utils.exceptions import handle_exception
 from app.utils.jwt import generate_token
 from app.dependencies.user import get_current_user
@@ -127,9 +129,23 @@ def signin_handler(db: DbSession, body: SignInSchema):
   except Exception as exc:
     handle_exception(exc)
 
-def me(user: User = Depends(get_current_user)):
+def me(db: DbSession, user: User = Depends(get_current_user)):
+  college = db.scalar(select(College)
+                      .options(
+                        load_only(College.name),
+                        joinedload(College.logo_file).load_only(File.url)
+                      )
+                      .where(College.id == User.college_id)
+                    )
+
   return {
-    "id": user.id,
-    "name": user.name,
-    "email": user.email
+    "success": True,
+    "data": {
+      "id": user.id,
+      "name": user.name,
+      "email": user.email,
+      "is_active": user.is_active,
+      "avatar": user.avatar,
+      "college": college
+    }
   }
